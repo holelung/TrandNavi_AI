@@ -1,0 +1,5 @@
+#.venv폴더 무시
+/.venv
+
+#env
+.env
