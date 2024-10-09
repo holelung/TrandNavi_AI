@@ -1,0 +1,1 @@
+# TrandNavi_AI
