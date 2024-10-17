@@ -1,35 +1,27 @@
 import os
 import requests
+from flask import Flask, render_template, request, Response
 from urllib.parse import quote
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, Response
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.memory import ConversationBufferMemory
 from langchain.schema import HumanMessage
-from langchain_core.runnables import Runnable, RunnableParallel, RunnablePassthrough
-from langchain.callbacks.tracers.langchain import wait_for_all_tracers
+from langchain.callbacks import StreamingStdOutCallbackHandler
+from PIL import Image
 import json
+import io
+import base64
 
-from langsmith import Client
-
+app = Flask(__name__)
 
 # API 키 설정
 load_dotenv()
-
-LANGCHAIN_TRACING_V2 = True
-LANGCHAIN_ENDPOINT = os.getenv("LANGCHAIN_ENDPOINT")
-LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
-LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT")
-client = Client()
-
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 NAVER_CLIENT_ID = os.getenv('NAVER_CLIENT_ID')
 NAVER_CLIENT_SECRET = os.getenv('NAVER_CLIENT_SECRET')
 
-app = Flask(__name__)
-
-# 네이버 쇼핑 API 데이터 가져오기 (LCEL로 변환)
+# 네이버 쇼핑 API 데이터 가져오기
 def get_naver_shopping_data(query, display=30):
     url = "https://openapi.naver.com/v1/search/shop.json"
     headers = {
@@ -57,7 +49,6 @@ def format_product_info(items):
     formatted_items = []
     for item in items:
         link = validate_and_process_link(item)
-        
          # 항상 이미지 태그로 포맷팅
         image_html = f"<img src='{item['image']}' alt='Product Image' style='max-width:100%; max-height:200px;'>"
         formatted_item = (
@@ -66,23 +57,45 @@ def format_product_info(items):
             f"가격: {item['lprice']}원\n"
             f"브랜드: {item.get('brand', 'N/A')}\n"
             f"카테고리: {item.get('category1', '')}/{item.get('category2', '')}\n"
-            f"링크: {link}\n"
+            #f"링크: {link}\n"
         )
         formatted_items.append(formatted_item)
     return "\n".join(formatted_items)
 
+# 커스텀 스트리밍 콜백 핸들러
+class CustomStreamingCallbackHandler(StreamingStdOutCallbackHandler):
+    def __init__(self):
+        self.text = ""
+
+    def on_llm_new_token(self, token: str, **kwargs) -> None:
+        self.text += token
+        print(token, end="", flush=True)
+
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4o", streaming=True)
 
+
 template = """
 너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야. 
-사용자에게 최적의 쇼핑 정보를 제공하는 것이 너의 역할이야. 
+사용자에게 최적의 쇼핑 정보를 제공하는 것이 너의 역할이야.
+
 
 다음 규칙을 준수해:
 1. 사용자가 요청한 상품과 관련 없는 상품은 절대 추천하지 마.
-2. 항상 상품명, 이미지, 가격, 브랜드, 카테고리, 링크 정보를 함께 제공해.
-3. 만약 유효하지 않은 링크가 있다면 대체 링크를 제공하거나 검색 방법을 안내해.
-4. 결과가 부족하거나 찾을 수 없는 경우, 솔직하게 '정보 부족'이라고 답해.
+2. 항상 상품명, 이미지, 가격, 브랜드, 카테고리, 링크 정보를 **위에 정해진 형식**대로 제공해. 
+   형식은 다음과 같아:
+   
+   - 상품명: 한성컴퓨터 TFG Cloud CF 3모드 듀얼 가스켓 기계식 키보드
+   - 이미지: <img src='https://shopping-phinf.pstatic.net/main_4818931/48189314618.20240604091600.jpg' alt='Product Image' style='max-width:100%; max-height:200px;'>  이미지를 크롤링으로 가져옴
+   - 가격: 139000원
+   - 브랜드: 한성컴퓨터
+   - 카테고리: 디지털/가전/주변기기
+   - 링크: https://search.shopping.naver.com/search/all?query=한성컴퓨터%20TFG%20Cloud%20CF%203모드%20듀얼%20가스켓%20기계식%20키보드 상품명을 뒤에 넣는 식으로 강제함
+
+3. 사용자의 상품에 대한 질문이 대해서 상품의 상품명, 카테고리, 가격이 포함되어 있지 않으면 해당 정보를 추가로 요구하는 질문을 반드시 해줘.
+4. 이미지는 항상 상품명과 관련된 이미지만을 보여줘.
+5. 동일한 상품 정보를 중복되지 않게 제공하고, 최신 정보를 유지해.
+
 
 상품 정보:
 {product_info}
@@ -102,8 +115,6 @@ memory = ConversationBufferMemory(memory_key="history", input_key="human_input")
 @app.route('/')
 def home():
     return render_template('chat.html')
-
-
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json['message']
@@ -113,39 +124,26 @@ def chat():
     product_info = format_product_info(items)
     
     # 대화 기록 가져오기
-    history = memory.load_memory_variables({}).get("history", "")  # history가 없으면 빈 문자열로 처리
+    history = memory.load_memory_variables({})["history"]
+    
+    # 프롬프트 생성
+    messages = prompt.format_messages(
+        product_info=product_info,
+        history=history,
+        human_input=user_message
+    )
 
-    # LCEL 체인을 사용하여 데이터 처리
     def generate():
-        # 'RunnableParallel'은 병렬로 작업을 처리하므로, 여기서는 단순히 각 값을 전달하는 방식으로 구성합니다.
-        retrieval = RunnableParallel({
-            "human_input": RunnablePassthrough(),  # 사용자의 입력을 그대로 전달
-            "history": RunnablePassthrough(),  # 대화 기록을 그대로 전달
-            "product_info": RunnablePassthrough()  # 상품 정보를 그대로 전달
-        })
-
-        # Prompt 생성
-        messages = prompt.format_messages(
-            product_info=product_info,
-            history=history,
-            human_input=user_message
-        )
-
-        # LLM으로부터 스트리밍 응답 받기
-        try:
-            full_response = ""
-            for chunk in llm.stream(messages):  # messages는 올바른 형식이어야 함
-                if chunk.content:
-                    full_response += chunk.content
-                    yield f"data: {json.dumps({'response': full_response})}\n\n"
-        finally:
-            wait_for_all_tracers()
-            
+        full_response = ""
+        for chunk in llm.stream(messages):
+            if chunk.content:
+                full_response += chunk.content
+                yield f"data: {json.dumps({'response': full_response})}\n\n"
+        
         # 메모리 업데이트
         memory.save_context({"human_input": user_message}, {"output": full_response})
 
     return Response(generate(), content_type='text/event-stream')
 
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) 
