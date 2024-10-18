@@ -1,16 +1,7 @@
 console.log("chat.js connection");
 // 채팅창 챗봇 로고
 const chatbotLogoUrl = $("#chat-messages").data("chatbot-logo");
-// marked 옵션 설정
-marked.use({
-    renderer: {
-        link(href, title, text) {
-            const displayText = text === "링크" ? href : text;
-            const titleAttr = title ? `title="${title}"` : "";
-            return `<a href="${href}" ${titleAttr} target="_blank" rel="noopener noreferrer">${displayText}</a>`;
-        },
-    },
-});
+
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
     const initialMessage =
@@ -23,7 +14,7 @@ function addBotMessage(message) {
     const markedMessage = marked.parse(message);
     const sanitizedMessage = DOMPurify.sanitize(markedMessage);
     $("#chat-messages").append(
-        `<div class="flex items-center mb-4">
+        `<div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content">
                 ${sanitizedMessage}
@@ -50,7 +41,7 @@ function sendMessage() {
     $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
 
     var botMessageContainer = $(
-        `<div class="flex items-center mb-4">
+        `<div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content">
             </div>
@@ -80,6 +71,7 @@ function sendMessage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
                         const markedResponse = marked.parse(data.response);
+                        console.log("파싱 결과: ", markedResponse);
                         const sanitizedResponse =
                             DOMPurify.sanitize(markedResponse);
                         // botMessageContainer의 특정 div에 응답 메시지 추가
