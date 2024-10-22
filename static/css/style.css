@@ -61,6 +61,13 @@ a {
     overflow-y: auto;
     padding: 15px;
 }
+.bot-message-content {
+    max-width: 768px; /* 박스의 최대 너비를 제한 */
+    word-wrap: break-word; /* 긴 단어를 줄바꿈 */
+    word-break: break-word; /* 단어가 너무 길면 강제로 줄바꿈 */
+    overflow-wrap: break-word; /* 긴 텍스트를 박스 내에서 줄바꿈 */
+    white-space: normal; /* 텍스트가 자동으로 줄바꿈되도록 설정 */
+}
 
 .chat-input {
     width: 100%;
