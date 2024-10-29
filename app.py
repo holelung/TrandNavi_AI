@@ -62,7 +62,7 @@ def format_product_info(items):
     return "\n".join(formatted_items)
 
 # LLM 모델 초기화
-llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
+llm = ChatOpenAI(temperature=0.7, model_name="gpt-4o", streaming=True)
 
 # 프롬프트 템플릿 설정
 template = """
