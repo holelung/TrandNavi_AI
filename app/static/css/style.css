@@ -14,8 +14,8 @@ li {
     box-sizing: border-box;
 }
 a {
-    color: blue;
-    text-decoration: underline;
+    color: white;
+    text-decoration: none;
 }
 
 /* 사이드바 */
