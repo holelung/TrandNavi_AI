@@ -4,7 +4,6 @@ from app.config import Config
 from app.db import engine  # 생성된 engine 사용
 from app.models import Base  # Base 임포트
 from flask_jwt_extended import JWTManager
-from app.db.blacklist import BLACKLIST
 from app.db.redis_client import redis_client
 import redis
 
