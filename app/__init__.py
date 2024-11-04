@@ -5,7 +5,7 @@ from app.db import engine  # 생성된 engine 사용
 from app.models import Base  # Base 임포트
 from flask_jwt_extended import JWTManager
 from app.db.redis_client import redis_client
-import redis
+from app.utils.token_utils import is_token_blacklisted
 
 # Flask 앱 초기화 및 설정 함수
 def create_app():
@@ -26,7 +26,7 @@ def create_app():
     @jwt.token_in_blocklist_loader
     def check_if_token_in_blacklist(jwt_header, jwt_payload):
         jti = jwt_payload["jti"]
-        return redis_client.get(jti) is not None    
+        return is_token_blacklisted(jti)    
     
     # 데이터베이스 테이블 생성
     Base.metadata.create_all(engine)  # 엔진을 사용해 테이블 생성

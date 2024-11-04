@@ -74,5 +74,5 @@ def refresh():
 @jwt_required()
 def logout():
     jti = get_jwt()['jti']
-    redis_client.setex(jti, timedelta(hours=1),"true")
+    redis_client.setex(jti, timedelta(minutes=30),"true")
     return jsonify(message="Successfully logged out"),200
