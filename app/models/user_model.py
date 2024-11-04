@@ -1,7 +1,8 @@
 # app/models/user_model.py
 from datetime import datetime
 from sqlalchemy import ForeignKey, String, Integer, DateTime, Column
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import relationship
+
 from app.models.base import Base
 
 class User(Base):
@@ -12,6 +13,9 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
     created_at = Column(DateTime, default=datetime.now)
+
+    # User:Cart 1:N
+    cart_items = relationship('Cart', back_populates='user')
 
     def __init__(self, name, email, password):
         self.name = name

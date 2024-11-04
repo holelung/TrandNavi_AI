@@ -1,4 +1,4 @@
-# app/routes/auth.py
+# app/routes/auth_routes.py
 from flask import Blueprint, request, jsonify
 from app.db import Session
 from app.models.user_model import User
@@ -18,6 +18,7 @@ import redis
 
 auth_bp = Blueprint('auth', __name__)
 
+# 회원가입
 @auth_bp.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -33,7 +34,7 @@ def signup():
     
     return jsonify({"message": "User created successfully"}), 201
 
-
+# 로그인
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
