@@ -27,6 +27,8 @@ $(document).ready(function () {
 function addBotMessage(message) {
     const markedMessage = marked.parse(message);
     const sanitizedMessage = DOMPurify.sanitize(markedMessage);
+
+    // LLM 응답을 그대로 출력
     $("#chat-messages").append(
         `<div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
@@ -35,6 +37,7 @@ function addBotMessage(message) {
             </div>
         </div>`
     );
+
     // 스크롤 위치를 맨아래로 이동
     $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
 }
@@ -54,8 +57,8 @@ function sendMessage() {
     $("#user-input").val("");
     $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
 
-    var botMessageContainer = $(
-        `<div class="flex items-start mb-4">
+    var botMessageContainer = $(`
+        <div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
         </div>`
@@ -84,8 +87,9 @@ function sendMessage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse =
-                            DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse = DOMPurify.sanitize(markedResponse);
+
+                        // LLM 응답을 그대로 출력
                         botMessageContainer
                             .find(".bot-message-content")
                             .html(sanitizedResponse);
@@ -123,8 +127,8 @@ function uploadImage() {
     );
     $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
 
-    var botMessageContainer = $(
-        `<div class="flex items-start mb-4">
+    var botMessageContainer = $(`
+        <div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
         </div>`
@@ -150,8 +154,9 @@ function uploadImage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse =
-                            DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse = DOMPurify.sanitize(markedResponse);
+
+                        // LLM 응답을 그대로 출력
                         botMessageContainer
                             .find(".bot-message-content")
                             .html(sanitizedResponse);

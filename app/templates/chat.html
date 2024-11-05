@@ -21,6 +21,17 @@
     </script>
 </head>
 
+<style>
+    /* <ol> 태그에 번호를 강제로 표시하도록 설정 */
+    ol {
+        list-style-type: decimal;
+        margin-left: 20px; /* 번호가 잘 보이도록 들여쓰기 */
+    }
+    li {
+        margin-bottom: 5px; /* 각 목록 항목 사이에 약간의 간격 추가 */
+    }
+</style>
+
 <body class="h-screen bg-gray-100">
     <!-- 화면 전체 -->
     <div class="flex h-full">
@@ -146,43 +157,7 @@
                             공유하기
                         </div>
                     </button>
-                    <!-- 프로필 버튼-->
-                    <div class="relative">
-                        <!-- 프로필 버튼 -->
-                        <button onclick="toggleMenu()"
-                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-400"
-                            data-testid="profile-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24"
-                                height="24" stroke-width="1.5" stroke="currentColor" class="w-9 h-9">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                            </svg>
-                        </button>
-
-                        <!-- 드롭다운 메뉴 -->
-                        <div id="profileMenu"
-                            class="hidden absolute right-0 top-full py-2 w-56 bg-gray-800 text-white rounded-lg shadow-lg z-50">
-                            <div class="p-4 border-b border-gray-700">
-                                <p class="text-sm font-medium">trandNavi@gmail.com</p>
-                            </div>
-                            <ul class="py-2">
-                                <li><a href="#" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700">ChatGPT 맞춤
-                                        설정</a></li>
-                                <li><a href="#" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700">설정</a>
-                                </li>
-                                <li><a href="#" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700">팀원 추가</a>
-                                </li>
-                                <li><a href="#" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700">macOS 앱
-                                        다운로드</a></li>
-                                <li><a href="#" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700">ChatGPT 검색
-                                        확장 프로그램 받기</a></li>
-                                <li><a href="#" class="flex items-center px-4 py-2 text-sm hover:bg-gray-700">로그아웃</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
-
             </div>
 
             <!-- Chat messages area -->
@@ -278,25 +253,6 @@
     <!-- script connection -->
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
-    <script>
-        function toggleMenu() {
-            console.log("profile_menu toggle");
-            const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // 메뉴 외부를 클릭하면 메뉴 닫기
-        window.addEventListener('click', function (event) {
-            const menu = document.getElementById('profileMenu');
-            const button = document.querySelector('[data-testid="profile-button"]');
-            if (!menu.contains(event.target) && !button.contains(event.target)) {
-                menu.classList.add('hidden');
-            }
-        });
-    </script>
-    <!-- <script src="{{ url_for('static', filename='js/script.js') }}"></script> -->
-
-
 </body>
 
 </html>
