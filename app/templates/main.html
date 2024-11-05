@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Top Navigation Bar fixed at the top with full width -->
+    <!-- Top Navigation Bar fixed at the top -->
+    <header class="bg-gray-900 text-white w-full fixed top-0 left-0">
+        <div class="container mx-auto flex items-center px-4 py-4">
+            <!-- Logo and title as a clickable link -->
+            <a href="{{ url_for('main.home') }}" class="flex items-center">
+                <img src="{{ url_for('static', filename='images/trandNavi-logo.png') }}" alt="Logo"
+                    class="mr-2 w-12 h-12 rounded-lg">
+                <h1 class="text-xl font-semibold">Trand NV</h1>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main content centered with text and buttons -->
+    <div class="flex flex-col items-center justify-center h-screen mt-20 text-center">
+        <!-- 제목 크기 키움: text-5xl 적용 -->
+        <h2 class="text-5xl font-bold mb-12">
+            무엇을 도와드릴까요?
+        </h2>
+
+        <div class="space-x-4">
+            <!-- 로그인 버튼 크기 키움: px-8 py-4 적용 -->
+            <a href="{{ url_for('main.login') }}"
+                class="px-8 py-4 bg-black text-white rounded-full text-xl font-semibold hover:bg-gray-800 transition">
+                로그인
+            </a>
+            <!-- 회원가입 버튼 크기 키움: px-8 py-4 적용 -->
+            <a href="{{ url_for('main.register') }}"
+                class="px-8 py-4 bg-gray-500 text-white rounded-full text-xl font-semibold hover:bg-gray-600 transition">
+                회원가입
+            </a>
+        </div>
+    </div>
+
+</body>
+
+</html>
