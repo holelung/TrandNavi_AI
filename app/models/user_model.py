@@ -1,12 +1,11 @@
-from . import db
+# app/models/user_model.py
 from datetime import datetime
 from sqlalchemy import ForeignKey, String, Integer, DateTime, Column
 from sqlalchemy.orm import relationship
 
 from app.models.base import Base
 
-
-class User(db.Model):
+class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -22,12 +21,6 @@ class User(db.Model):
         self.name = name
         self.email = email
         self.password = password
-
     
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    password = db.Column()
-
-    def __repr__(self):
-        return f"<User {self.name}>"
+    def __repr__(self) -> str: 
+        return f"<User(id={self.id!r}, name={self.name!r}, email={self.email!r},)>"
