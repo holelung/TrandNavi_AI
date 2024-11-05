@@ -10,7 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <!-- css -->
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" /> -->
     <link rel="icon" href="{{ url_for('static', filename='images/trandNavi-logo.png') }}" type="image/x-icon" />
     <!-- marked.js CDN 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -67,10 +68,10 @@
                             <li class="relative" data-testid="history-itme-0">
                                 <div class="no-draggable group relative rounded-lg active:opactiy-90 hover:bg-gray-600">
                                     <a class="flex items-center gap-2 p-2 text-white" data-discover="true" href="#">
-                                        <div class="relative grow overflow-hidden whitespace-nowrap" dir="auto">
-                                            나는 테스트다.
+                                        <div class="relative grow overflow-hidden whitespace-nowrap w-45" dir="auto">
+                                            나는 테스트다.12r가나나다라라마바사아자차카타파하
                                             <div
-                                                class="absolute bottom-0 top-0 to-transparent ltr:right-0 ltr:bg-gradient-to-l rtl:left-0 rtl:bg-gradient-to-r w-10 from-60%">
+                                                class="absolute bottom-0 top-0 bg-gradient-to-l right-0 w-10 bg-gray-800 group-hover:bg-gray-600">
                                             </div>
                                         </div>
                                     </a>
@@ -78,11 +79,11 @@
                                         class="flex absolute top-0 bottom-0 right-0 items-center gap-1.5 pr-2 ltr:right-0 rtl:left-0 flex">
                                         <span class data-state="closed">
                                             <button
-                                                class="flex items-center justify-center transition hover:text-gray-400 radix-state-open:text-gray-500"
-                                                data-testid="history-item-0-options" type="button" id="radix-:r5l:"
-                                                aria-haspopup="menu" aria-expanded="false" data-state="closed"><svg
-                                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg" class="icon-md">
+                                                class="flex opacity-0 items-center justify-center transition text-gray-300 hover:text-white group-hover:opacity-100 group-focus:opacity-100"
+                                                data-testid="history-item-0-options" type="button" aria-haspopup="menu"
+                                                aria-expanded="false" data-state="closed"><svg width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon-md">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M3 12C3 10.8954 3.89543 10 5 10C6.10457 10 7 10.8954 7 12C7 13.1046 6.10457 14 5 14C3.89543 14 3 13.1046 3 12ZM10 12C10 10.8954 10.8954 10 12 10C13.1046 10 14 10.8954 14 12C14 13.1046 13.1046 14 12 14C10.8954 14 10 13.1046 10 12ZM17 12C17 10.8954 17.8954 10 19 10C20.1046 10 21 10.8954 21 12C21 13.1046 20.1046 14 19 14C17.8954 14 17 13.1046 17 12Z"
                                                         fill="currentColor"></path>
@@ -94,10 +95,10 @@
                             <li class="relative" data-testid="history-itme-1">
                                 <div class="no-draggable group relative rounded-lg active:opactiy-90 hover:bg-gray-600">
                                     <a class="flex items-center gap-2 p-2 text-white" data-discover="true" href="#">
-                                        <div class="relative grow overflow-hidden whitespace-nowrap" dir="auto">
-                                            가나다라마바사 아자차카타파하 기니디리미비시.
+                                        <div class="relative grow overflow-hidden whitespace-nowrap w-45" dir="auto">
+                                            나는 테스트다.12r가나나다라라마바사아자차카타파하
                                             <div
-                                                class="absolute bottom-0 top-0 to-transparent ltr:right-0 ltr:bg-gradient-to-l rtl:left-0 rtl:bg-gradient-to-r w-10 from-60%">
+                                                class="absolute bottom-0 top-0 bg-gradient-to-l right-0 w-10 bg-gray-800 group-hover:bg-gray-600">
                                             </div>
                                         </div>
                                     </a>
@@ -105,11 +106,11 @@
                                         class="flex absolute top-0 bottom-0 right-0 items-center gap-1.5 pr-2 ltr:right-0 rtl:left-0 flex">
                                         <span class data-state="closed">
                                             <button
-                                                class="flex items-center justify-center transition hover:text-gray-400 radix-state-open:text-gray-500"
-                                                data-testid="history-item-1-options" type="button" id="radix-:r5l:"
-                                                aria-haspopup="menu" aria-expanded="false" data-state="closed"><svg
-                                                    width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg" class="icon-md">
+                                                class="flex opacity-0 items-center justify-center transition text-gray-300 hover:text-white group-hover:opacity-100 group-focus:opacity-100"
+                                                data-testid="history-item-0-options" type="button" aria-haspopup="menu"
+                                                aria-expanded="false" data-state="closed"><svg width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                    class="icon-md">
                                                     <path fill-rule="evenodd" clip-rule="evenodd"
                                                         d="M3 12C3 10.8954 3.89543 10 5 10C6.10457 10 7 10.8954 7 12C7 13.1046 6.10457 14 5 14C3.89543 14 3 13.1046 3 12ZM10 12C10 10.8954 10.8954 10 12 10C13.1046 10 14 10.8954 14 12C14 13.1046 13.1046 14 12 14C10.8954 14 10 13.1046 10 12ZM17 12C17 10.8954 17.8954 10 19 10C20.1046 10 21 10.8954 21 12C21 13.1046 20.1046 14 19 14C17.8954 14 17 13.1046 17 12Z"
                                                         fill="currentColor"></path>
@@ -157,6 +158,75 @@
                             공유하기
                         </div>
                     </button>
+                    <!-- 프로필 버튼-->
+                    <div class="relative">
+                        <!-- 프로필 버튼 -->
+                        <button onclick="toggleMenu()"
+                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-400"
+                            data-testid="profile-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24"
+                                height="24" stroke-width="1.5" stroke="currentColor" class="w-9 h-9">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        </button>
+
+                        <!-- 드롭다운 메뉴 -->
+                        <div id="profileMenu"
+                            class="hidden absolute right-0 top-full py-2 mt-1 w-72 bg-gray-700 text-white rounded-lg shadow-lg z-50">
+                            <div class="flex items-center py-2 pl-5 pr-4">
+                                <p class="text-sm font-medium">trandNavi@gmail.com</p>
+                            </div>
+                            <div role="separator" aria-orientation="horizontal" class="mx-5 my-1 h-px bg-gray-600">
+                            </div>
+                            <div role="menuitem"
+                                class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
+                                tabindex="-1">
+                                <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M11.5677 3.5C11.2129 3.5 10.8847 3.68789 10.7051 3.99377L9.89391 5.37524C9.3595 6.28538 8.38603 6.84786 7.3304 6.85645L5.73417 6.86945C5.3794 6.87233 5.0527 7.06288 4.87559 7.3702L4.43693 8.13135C4.2603 8.43784 4.25877 8.81481 4.43291 9.12273L5.22512 10.5235C5.74326 11.4397 5.74326 12.5603 5.22512 13.4765L4.43291 14.8773C4.25877 15.1852 4.2603 15.5622 4.43693 15.8687L4.87559 16.6298C5.0527 16.9371 5.3794 17.1277 5.73417 17.1306L7.33042 17.1436C8.38605 17.1522 9.35952 17.7146 9.89393 18.6248L10.7051 20.0062C10.8847 20.3121 11.2129 20.5 11.5677 20.5H12.4378C12.7926 20.5 13.1208 20.3121 13.3004 20.0062L14.1116 18.6248C14.646 17.7146 15.6195 17.1522 16.6751 17.1436L18.2714 17.1306C18.6262 17.1277 18.9529 16.9371 19.13 16.6298L19.5687 15.8687C19.7453 15.5622 19.7468 15.1852 19.5727 14.8773L18.7805 13.4765C18.2623 12.5603 18.2623 11.4397 18.7805 10.5235L19.5727 9.12273C19.7468 8.81481 19.7453 8.43784 19.5687 8.13135L19.13 7.3702C18.9529 7.06288 18.6262 6.87233 18.2714 6.86945L16.6751 6.85645C15.6195 6.84786 14.646 6.28538 14.1116 5.37524L13.3004 3.99377C13.1208 3.68788 12.7926 3.5 12.4378 3.5H11.5677ZM8.97978 2.98131C9.5186 2.06365 10.5033 1.5 11.5677 1.5H12.4378C13.5022 1.5 14.4869 2.06365 15.0257 2.98131L15.8369 4.36278C16.015 4.66616 16.3395 4.85365 16.6914 4.85652L18.2877 4.86951C19.352 4.87818 20.3321 5.4498 20.8635 6.37177L21.3021 7.13292C21.832 8.05239 21.8366 9.18331 21.3142 10.1071L20.522 11.5078C20.3493 11.8132 20.3493 12.1868 20.522 12.4922L21.3142 13.893C21.8366 14.8167 21.832 15.9476 21.3021 16.8671L20.8635 17.6282C20.3321 18.5502 19.352 19.1218 18.2877 19.1305L16.6914 19.1435C16.3395 19.1464 16.015 19.3339 15.8369 19.6372L15.0257 21.0187C14.4869 21.9363 13.5022 22.5 12.4378 22.5H11.5677C10.5033 22.5 9.5186 21.9363 8.97978 21.0187L8.16863 19.6372C7.99049 19.3339 7.666 19.1464 7.31413 19.1435L5.71789 19.1305C4.65357 19.1218 3.67347 18.5502 3.14213 17.6282L2.70347 16.8671C2.17358 15.9476 2.16899 14.8167 2.6914 13.893L3.48361 12.4922C3.65632 12.1868 3.65632 11.8132 3.48361 11.5078L2.6914 10.1071C2.16899 9.18331 2.17358 8.05239 2.70347 7.13292L3.14213 6.37177C3.67347 5.4498 4.65357 4.87818 5.71789 4.86951L7.31411 4.85652C7.66599 4.85366 7.99048 4.66616 8.16862 4.36278L8.97978 2.98131Z"
+                                            fill="currentColor"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M12.0028 10.5C11.1741 10.5 10.5024 11.1716 10.5024 12C10.5024 12.8284 11.1741 13.5 12.0028 13.5C12.8315 13.5 13.5032 12.8284 13.5032 12C13.5032 11.1716 12.8315 10.5 12.0028 10.5ZM8.50178 12C8.50178 10.067 10.0692 8.5 12.0028 8.5C13.9364 8.5 15.5038 10.067 15.5038 12C15.5038 13.933 13.9364 15.5 12.0028 15.5C10.0692 15.5 8.50178 13.933 8.50178 12Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                </div>
+                                설정
+                            </div>
+                            <div role="menuitem"
+                                class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
+                                tabindex="-1">
+                                <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                    </svg>
+
+                                </div>
+                                장바구니
+                            </div>
+
+                            <div role="separator" aria-orientation="horizontal" class="mx-5 my-1 h-px bg-gray-600">
+                            </div>
+                            <div role="menuitem"
+                                class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
+                                tabindex="-1">
+                                <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M6 4C5.44772 4 5 4.44772 5 5V19C5 19.5523 5.44772 20 6 20H10C10.5523 20 11 20.4477 11 21C11 21.5523 10.5523 22 10 22H6C4.34315 22 3 20.6569 3 19V5C3 3.34315 4.34315 2 6 2H10C10.5523 2 11 2.44772 11 3C11 3.55228 10.5523 4 10 4H6ZM15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289L20.7071 11.2929C21.0976 11.6834 21.0976 12.3166 20.7071 12.7071L16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071C14.9024 16.3166 14.9024 15.6834 15.2929 15.2929L17.5858 13H11C10.4477 13 10 12.5523 10 12C10 11.4477 10.4477 11 11 11H17.5858L15.2929 8.70711C14.9024 8.31658 14.9024 7.68342 15.2929 7.29289Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                </div>
+                                로그아웃
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

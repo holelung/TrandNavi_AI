@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_login.css') }}">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_register.css') }}">
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
+        /* 로그인 버튼 스타일 */
         .register a {
             color: #333;
             font-weight: bold;
@@ -20,18 +21,6 @@
         }
 
         .register a:hover {
-            color: #000;
-        }
-
-        /* 비밀번호를 잊어버리셨나요 링크 스타일 */
-        .check a {
-            color: #333;
-            font-weight: bold;
-            text-decoration: underline;
-            transition: color 0.3s ease;
-        }
-
-        .check a:hover {
             color: #000;
         }
     </style>
@@ -53,28 +42,33 @@
 
     <!-- Main content with padding to prevent overlap with fixed header -->
     <div class="wrapper mx-auto mt-20">
-        <h2>로그인</h2>
+        <h2>회원가입</h2>
         <div class="login">
-            <input type="email" placeholder="계정이름"><i class="fas fa-user usericon"></i>
+            <input type="text" placeholder="이름"><i class="fas fa-user usericon"></i>
+        </div>
+        <div class="login">
+            <input type="email" placeholder="이메일"><i class="fas fa-envelope usericon"></i>
         </div>
         <div class="password">
             <input type="password" placeholder="비밀번호"><i class="fas fa-lock lockicon"></i>
         </div>
+        <div class="password">
+            <input type="password" placeholder="비밀번호 확인"><i class="fas fa-lock lockicon"></i>
+        </div>
         <div class="check">
-            <input type="checkbox"><span>계정 기억하기</span>
-            <a href="#">비밀번호를 잊어버리셨나요?</a>
+            <input type="checkbox"><span>이용약관에 동의합니다.</span>
         </div>
         <div class="loginbtn">
-            <button>로그인</button>
+            <button>회원가입</button>
         </div>
         <div class="register">
-            <span>계정이 없으신가요?</span>
-            <a href="{{ url_for('main.register') }}">회원가입</a>
+            <span>이미 계정이 있으신가요?</span>
+            <!-- Login 페이지로 이동 -->
+            <a href="{{ url_for('main.login') }}">로그인</a>
         </div>
     </div>
 
     <!-- JavaScript Libraries -->
-    <script src="script.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://kit.fontawesome.com/c6ff0ca5bd.js" crossorigin="anonymous"></script>

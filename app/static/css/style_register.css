@@ -1,0 +1,97 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: white;
+    background-position: center;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    user-select: none;
+}
+
+.wrapper {
+    position: relative;
+    width: 450px;
+    height: 600px;
+    backdrop-filter: blur(15px);
+    border: 1px solid black;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.wrapper h2 {
+    font-size: 36px;
+    color: black;
+    margin: 40px;
+}
+
+.login input,
+.password input {
+    width: 70%;
+    height: 50px;
+    margin: 10px;
+    padding-left: 10px;
+    outline: none;
+    border: 1px solid black;
+    border-radius: 30px;
+    background: transparent;
+    color: black;
+    font-size: 15px;
+    padding-right: 50px;
+}
+
+.login .usericon,
+.password .lockicon {
+    position: relative;
+    color: black;
+    right: 45px;
+}
+
+::placeholder {
+    color: black;
+}
+
+.check span,
+.check a {
+    color: black;
+    margin: 20px;
+}
+
+.check input {
+    position: relative;
+    left: 15px;
+}
+
+/* Register button styling for a bolder look */
+.loginbtn button {
+    width: 70%;
+    height: 50px;
+    border: 1px solid black;
+    background: black;
+    color: white;
+    border-radius: 30px;
+    margin: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Added shadow for emphasis */
+    transition: transform 0.1s ease-in-out; /* Added subtle transform effect */
+}
+
+.loginbtn button:hover {
+    transform: scale(1.05); /* Slightly enlarges button on hover */
+}
+
+.register span,
+.register a {
+    color: black;
+    margin: 5px;
+}
