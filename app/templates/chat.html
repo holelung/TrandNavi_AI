@@ -22,6 +22,17 @@
     </script>
 </head>
 
+<style>
+    /* <ol> 태그에 번호를 강제로 표시하도록 설정 */
+    ol {
+        list-style-type: decimal;
+        margin-left: 20px; /* 번호가 잘 보이도록 들여쓰기 */
+    }
+    li {
+        margin-bottom: 5px; /* 각 목록 항목 사이에 약간의 간격 추가 */
+    }
+</style>
+
 <body class="h-screen bg-gray-100">
     <!-- 화면 전체 -->
     <div class="flex h-full">
@@ -215,8 +226,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
 
             <!-- Chat messages area -->
@@ -312,25 +323,6 @@
     <!-- script connection -->
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
-    <script>
-        function toggleMenu() {
-            console.log("profile_menu toggle");
-            const menu = document.getElementById('profileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // 메뉴 외부를 클릭하면 메뉴 닫기
-        window.addEventListener('click', function (event) {
-            const menu = document.getElementById('profileMenu');
-            const button = document.querySelector('[data-testid="profile-button"]');
-            if (!menu.contains(event.target) && !button.contains(event.target)) {
-                menu.classList.add('hidden');
-            }
-        });
-    </script>
-    <!-- <script src="{{ url_for('static', filename='js/script.js') }}"></script> -->
-
-
 </body>
 
 </html>

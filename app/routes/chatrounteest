@@ -1,0 +1,42 @@
+# chat_routes.py
+from flask import Blueprint, jsonify, request, Response
+from app.services.naver_shopping_service import get_naver_shopping_data, format_product_info
+from app.llm_config import llm, prompt
+from app.redis_handler import RedisChatMemory
+import json
+
+chat_bp = Blueprint('chat', __name__)
+
+@chat_bp.route('/chat', methods=['POST'])
+def chat():
+    user_message = request.json['message']
+    session_id = request.json.get("session_id", "default_session")  # 세션 ID를 요청에서 받아오거나 기본값 사용
+
+    # Redis 기반 메모리 생성
+    redis_memory = RedisChatMemory(session_id)
+
+    # 네이버 쇼핑 API로 상품 정보 가져오기
+    items = get_naver_shopping_data(user_message)
+    product_info = format_product_info(items)
+
+    # Redis에서 대화 기록 불러오기
+    history = redis_memory.load_memory_variables()["history"]
+
+    # 프롬프트 생성
+    messages = prompt.format_messages(
+        product_info=product_info,
+        history=history,
+        human_input=user_message
+    )
+
+    def generate():
+        full_response = ""
+        for chunk in llm.stream(messages):
+            if chunk.content:
+                full_response += chunk.content
+                yield f"data: {json.dumps({'response': full_response})}\n\n"
+        
+        # Redis에 채팅 기록 업데이트
+        redis_memory.save_context(user_message, full_response)
+
+    return Response(generate(), content_type='text/event-stream')
