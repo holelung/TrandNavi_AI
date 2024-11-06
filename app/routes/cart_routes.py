@@ -58,7 +58,7 @@ def remove_from_cart(cart_id):
 
 
 # 상품 목록 불러오기
-@cart_bp.route('/cart', methods=['GET'])
+@cart_bp.route('/cart_load', methods=['GET'])
 @jwt_required()
 def get_cart():
     user_id = get_jwt_identity()

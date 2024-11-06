@@ -16,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- DOMPurify.js CDN 추가 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script>
         const chatBotLogoUrl = "{{ url_for('static', filename='images/trandNavi-logo.png') }}"
     </script>
@@ -195,7 +196,7 @@
                             </div>
                             <div role="menuitem"
                                 class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
-                                tabindex="-1">
+                                tabindex="-1" onclick="click_cart()">
                                 <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
                                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -211,7 +212,7 @@
                             </div>
                             <div role="menuitem"
                                 class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
-                                tabindex="-1">
+                                tabindex="-1" onclick="click_logout()">
                                 <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
@@ -251,16 +252,14 @@
                                     <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
                                         가격</th>
                                     <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        카테고리</th>
+                                        상세설명</th>
                                     <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        브랜드</th>
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        수량</th>
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-gray-300">선택</th>
+                                        추가날짜</th>
+                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-gray-300">옵션</th>
                                 </tr>
                             </thead>
                             <!-- 테이블 바디 -->
-                            <tbody>
+                            <tbody id="cart-items">
                                 <!-- 5 Sample Cart Item Rows -->
                                 <!-- 상품 1 -->
                                 <tr class="border border-gray-300">
@@ -277,322 +276,6 @@
                                     <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 100,000</td>
                                     <td class="py-4 px-6 border-b text-gray-700">가전</td>
                                     <td class="py-4 px-6 border-b text-gray-700">브랜드 A</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 2 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 2</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 50,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">의류</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 B</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 3 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 3</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 75,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">식품</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 C</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 4 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 4</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 200,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">전자기기</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 D</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 5 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 5</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 150,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">생활용품</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 E</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 6 -->
-                                <tr class="border border-gray-300">
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 6</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 100,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">가전</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 A</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 7 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 7</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 50,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">의류</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 B</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 8 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 8</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 75,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">식품</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 C</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 9 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 9</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 200,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">전자기기</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 D</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <!-- 상품 10 -->
-                                <tr>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 10</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 150,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">생활용품</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 E</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center space-x-2">
-                                            <button onclick="decreaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">-</button>
-                                            <input type="number" min="1" max="99" value="1"
-                                                class="w-12 text-center border border-gray-300 rounded" readonly>
-                                            <button onclick="increaseQuantity(this)"
-                                                class="px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">+</button>
-                                        </div>
-                                    </td>
                                     <td class="py-4 px-6 border-b">
                                         <div class="flex flex-col space-y-2">
                                             <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
@@ -615,6 +298,7 @@
             // auth.js에 정의된 checkLoginStatus 호출
             if (typeof checkLoginStatus === "function") {
                 checkLoginStatus();
+                loadCartItems();
             } else {
                 console.error("checkLoginStatus 함수가 정의되지 않았습니다.");
             }
@@ -623,6 +307,7 @@
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
     <script>
         function increaseQuantity(button) {
             let input = button.previousElementSibling;
