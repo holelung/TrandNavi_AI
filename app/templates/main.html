@@ -240,6 +240,7 @@
             <!-- Chat messages area -->
             <div class="flex-grow p-4 overflow-y-auto bg-white" id="chat-messages"
                 data-chatbot-logo="{{ url_for('static', filename='images/trendNavi-logo.png') }}">
+                <div id="llmResponse"></div>
                 <!-- 챗봇 메시지 예시 블럭-->
                 <!-- <div class="flex items-start mb-4">
                     <img src="{{ url_for('static', filename='images/trandNavi-logo.png') }}" alt="Chatbot Logo"
@@ -255,6 +256,11 @@
                     </div>
                 </div> -->
             </div>
+            <script>
+                // 서버에서 가져온 LLM 응답을 HTML로 삽입
+                const llmResponse = "LLM이 반환한 HTML 응답"; // 서버에서 가져온 실제 LLM 응답을 이곳에 대입하세요.
+                document.getElementById("llmResponse").innerHTML = llmResponse;
+            </script>
 
             <!-- 여기서부터 footer -->
             <div class="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full bg-white">
