@@ -134,9 +134,12 @@
                                 fill="currentColor"></path>
                         </svg>
                     </button>
-                    <img src="{{ url_for('static', filename='images/trendNavi-logo.png') }}" alt="Chatbot Logo"
-                        class="mr-2 w-12 h-12 rounded-lg">
-                    <h4 class="text-xl font-semibold">Trend NV</h4>
+                    <a href="{{ url_for('main.main') }}" class="flex items-center"
+                        style="text-decoration: none; color:white">
+                        <img src="{{ url_for('static', filename='images/trendNavi-logo.png') }}" alt="Chatbot Logo"
+                            class="mr-2 w-12 h-12 rounded-lg">
+                        <h4 class="text-xl font-semibold">Trend NV</h4>
+                    </a>
                 </div>
                 <!-- 공유버튼 -->
                 <div class="flex items-center gap-2 pr-1 leading-[0]">
@@ -192,7 +195,7 @@
                             </div>
                             <div role="menuitem"
                                 class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
-                                tabindex="-1">
+                                tabindex="-1" onclick="click_cart()">
                                 <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
                                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
                                         fill="none" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -208,7 +211,7 @@
                             </div>
                             <div role="menuitem"
                                 class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
-                                tabindex="-1">
+                                tabindex="-1" onclick="click_logout()">
                                 <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
@@ -319,6 +322,16 @@
 
     </div>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // auth.js에 정의된 checkLoginStatus 호출
+            if (typeof checkLoginStatus === "function") {
+                checkLoginStatus();
+            } else {
+                console.error("checkLoginStatus 함수가 정의되지 않았습니다.");
+            }
+        });
+    </script>
 
     <!-- Tailwind CSS Script -->
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.js"></script>

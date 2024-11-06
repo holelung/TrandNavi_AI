@@ -69,6 +69,7 @@ image_template = """
     - 브랜드: [브랜드]
     - 카테고리: [카테고리]
     - 링크: [링크]
+    - <button onclick="addToCart('[상품명]', '[가격]', '[이미지 URL]', '{브랜드}')">장바구니에 추가</button>
 
     대화 기록:
     {history}
