@@ -2,7 +2,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from app.redis_handler import RedisChatMemory
 from app.services.trend_service import get_related_topics
-
+#테스트
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
 
@@ -29,6 +29,7 @@ template = """
     - 브랜드: [브랜드]
     - 카테고리: [카테고리]
     - 링크: [링크]
+    - <button onclick="addToCart('[상품명]', '[가격]', '[이미지 URL]', '[브랜드]')">장바구니에 추가</button>
     
     추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요?"라고 묻고,
     사용자가 "네"라고 대답하면 "몇 번 상품의 가격 비교가 필요하신가요?"라고 질문해줘.
@@ -69,6 +70,7 @@ image_template = """
     - 브랜드: [브랜드]
     - 카테고리: [카테고리]
     - 링크: [링크]
+    - <button onclick="addToCart('[상품명]', '[가격]', '[이미지 URL]', '[브랜드]')">장바구니에 추가</button>
 
     대화 기록:
     {history}

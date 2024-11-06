@@ -3,11 +3,13 @@ from app.services.naver_shopping_service import get_naver_shopping_data, format_
 from app.services.trend_service import get_related_topics  # 트렌드 서비스 추가
 from app.llm_config import llm, prompt, trend_template, extract_keyword  # 트렌드 템플릿 및 키워드 추출 함수 추가
 from app.redis_handler import RedisChatMemory
+from flask_jwt_extended import jwt_required
 import json
 
 chat_bp = Blueprint('chat', __name__)
 
 @chat_bp.route('/chat', methods=['POST'])
+@jwt_required()
 def chat():
     user_message = request.json['message']
     session_id = request.json.get("session_id", "default_session")

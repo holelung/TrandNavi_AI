@@ -33,9 +33,9 @@
         <div class="container mx-auto flex items-center px-4 py-4">
             <!-- Logo and title as a clickable link -->
             <a href="{{ url_for('main.home') }}" class="flex items-center">
-                <img src="{{ url_for('static', filename='images/trandNavi-logo.png') }}" alt="Logo"
+                <img src="{{ url_for('static', filename='images/trendNavi-logo.png') }}" alt="Logo"
                     class="mr-2 w-12 h-12 rounded-lg">
-                <h1 class="text-xl font-semibold">Trand NV</h1>
+                <h1 class="text-xl font-semibold">Trend NV</h1>
             </a>
         </div>
     </header>
@@ -44,22 +44,26 @@
     <div class="wrapper mx-auto mt-20">
         <h2>회원가입</h2>
         <div class="login">
-            <input type="text" placeholder="이름"><i class="fas fa-user usericon"></i>
+            <input type="text" id="name" placeholder="이름"><i class="fas fa-user usericon"></i>
         </div>
         <div class="login">
-            <input type="email" placeholder="이메일"><i class="fas fa-envelope usericon"></i>
+            <input type="email" id="email" placeholder="이메일"><i class="fas fa-envelope usericon"></i>
         </div>
         <div class="password">
-            <input type="password" placeholder="비밀번호"><i class="fas fa-lock lockicon"></i>
+            <input type="password" id="password" placeholder="비밀번호"><i class="fas fa-lock lockicon"></i>
         </div>
+        <!-- 비밀번호 확인 나중에
         <div class="password">
-            <input type="password" placeholder="비밀번호 확인"><i class="fas fa-lock lockicon"></i>
-        </div>
+            <input type="password" id="password_repeat" placeholder="비밀번호 확인"><i class="fas fa-lock lockicon"></i>
+        </div> 
+        -->
+        <!-- 약관 나중에
         <div class="check">
             <input type="checkbox"><span>이용약관에 동의합니다.</span>
-        </div>
+        </div> 
+        -->
         <div class="loginbtn">
-            <button>회원가입</button>
+            <button onclick="sign_up()">회원가입</button>
         </div>
         <div class="register">
             <span>이미 계정이 있으신가요?</span>
@@ -72,6 +76,7 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://kit.fontawesome.com/c6ff0ca5bd.js" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
 </body>
 
 </html>
