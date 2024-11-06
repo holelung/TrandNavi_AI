@@ -3,6 +3,7 @@
 // 로그인 확인 함수
 function checkLoginStatus() {
     const token = localStorage.getItem("access_token"); // 토큰 가져오기
+    const user_name = localStorage.getItem("user_name");
 
     if (!token) {
         // 토큰이 없으면 로그인 페이지로 리디렉션
@@ -12,6 +13,7 @@ function checkLoginStatus() {
         // 로그인 상태가 확인된 경우 로그 메시지 출력 (필요 시 다른 작업 수행 가능)
         console.log("로그인 상태 확인: 로그인 되어 있습니다.");
         // 필요한 경우 서버에 토큰 유효성 확인 요청 가능
+        document.getElementById("user_name").innerText = user_name;
     }
 }
 
@@ -38,6 +40,7 @@ function click_login() {
         })
         .then((data) => {
             // 로그인 성공 시 access_token을 저장
+            localStorage.setItem("user_name", data.user_name);
             localStorage.setItem("access_token", data.access_token);
             localStorage.setItem("refresh_token", data.refresh_token);
             alert("로그인 성공!");
@@ -76,12 +79,15 @@ function click_cart() {
     window.location.href = "/cart";
 }
 
+// 로그아웃
 function click_logout() {
     localStorage.removeItem("access_token");
-
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_name");
     window.location.href = "/";
 }
 
+// 회원가입
 function sign_up() {
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
