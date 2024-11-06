@@ -46,9 +46,10 @@ def login():
     session.close()
     
     if user and check_password_hash(user.password, password):
+        user_name = user.name
         access_token = create_access_token(identity=user.id)
         refresh_token = create_refresh_token(identity=user.id)
-        return jsonify(access_token=access_token, refresh_token=refresh_token), 200
+        return jsonify(access_token=access_token, refresh_token=refresh_token, user_name=user_name), 200
     else:
         return jsonify({"message": "Invalid email or password"}), 400
 

@@ -46,6 +46,7 @@ function addBotMessage(message) {
 function sendMessage() {
     var userMessage = $("#user-input").val();
     if (userMessage.trim() === "") return;
+    const token = localStorage.getItem("access_token");
 
     $("#chat-messages").append(
         `<div class="flex justify-end mb-4">
@@ -67,6 +68,7 @@ function sendMessage() {
     fetch("/chat", {
         method: "POST",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ message: userMessage }),

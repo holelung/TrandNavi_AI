@@ -19,7 +19,6 @@ def register():
     return render_template('register.html')
 
 @main_bp.route('/cart') 
-@jwt_required()
 def cart():
     return render_template('cart.html')
 
