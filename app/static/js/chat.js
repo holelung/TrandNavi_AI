@@ -61,8 +61,7 @@ function sendMessage() {
         <div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
-        </div>`
-    );
+        </div>`);
     $("#chat-messages").append(botMessageContainer);
 
     fetch("/chat", {
@@ -87,7 +86,8 @@ function sendMessage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse = DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse =
+                            DOMPurify.sanitize(markedResponse);
 
                         // LLM 응답을 그대로 출력
                         botMessageContainer
@@ -131,8 +131,7 @@ function uploadImage() {
         <div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
-        </div>`
-    );
+        </div>`);
     $("#chat-messages").append(botMessageContainer);
 
     fetch("/upload", {
@@ -154,7 +153,8 @@ function uploadImage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse = DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse =
+                            DOMPurify.sanitize(markedResponse);
 
                         // LLM 응답을 그대로 출력
                         botMessageContainer
