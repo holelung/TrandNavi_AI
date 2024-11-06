@@ -30,26 +30,4 @@ document.addEventListener("click", function (event) {
     }
 });
 
-// 장바구니 연결
-async function addToCart(productName, price, productImg, brand) {
-    const response = await fetch("/cart", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt_token")}`, // JWT 토큰이 필요할 경우
-        },
-        body: JSON.stringify({
-            product_name: productName,
-            price: price,
-            product_img: productImg,
-            product_detail: brand,
-        }),
-    });
 
-    const result = await response.json();
-    if (response.ok) {
-        alert(result.message); // "Item add to cart" 메시지 표시
-    } else {
-        alert(result.error || "Failed to add item to cart");
-    }
-}
