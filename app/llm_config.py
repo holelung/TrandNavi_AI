@@ -2,11 +2,10 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from app.redis_handler import RedisChatMemory
 from app.services.trend_service import get_related_topics
-
+#테스트
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
 
-# 템플릿 설정
 template = """
     너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야.
     사용자가 요청한 상품과 관련된 정보를 충분히 얻기 위해 필요한 세 가지 질문을 번호 형식으로 자동 생성하고,
@@ -29,16 +28,17 @@ template = """
     - 브랜드: [브랜드]
     - 카테고리: [카테고리]
     - 링크: [링크]
+    - <button data-action="add-to-cart" data-product-name="[상품명]" data-price="[가격]" data-product-img="[이미지 URL]" data-brand="[브랜드]">장바구니에 추가</button>
+    이 버튼은 `onclick` 이벤트를 포함하지 않고, 대신 각 속성 정보를 **data-attributes** 형식으로 추가하도록 합니다. 장바구니 추가 기능은 JavaScript 코드에서 `data-action` 및 `data-product-name` 등을 인식하여 작동하도록 설계되어 있습니다.
+    이 형식을 상품마다 반복해줘서 여러 개의 상품을 추천할 때도 각각 장바구니 버튼이 생성되도록 해줘.
     
     추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요?"라고 묻고,
     사용자가 "네"라고 대답하면 "몇 번 상품의 가격 비교가 필요하신가요?"라고 질문해줘.
     
     사용자가 몇 번 상품의 가격 비교를 요청하면, 해당 상품의 최저가와 최고가를 가격 비교 API를 통해 가져와서 제공해줘.
     위 데이터를 바탕으로 다음과 같이 응답해줘:
-    1. 현재 가격 비교한 상품의 최저가 최고가를 비교해 2문장으로 설명  
+    1. 현재 가격 비교한 상품의 최저가와 최고가를 비교하여 2문장으로 설명  
     2. 사용자에게 도움될 만한 구체적인 가격비교 결론 제공
-
-    
 
     대화 기록:
     {history}
@@ -46,6 +46,7 @@ template = """
     사용자: {human_input}
     트렌드 네비게이터:
 """
+
 
 # Image-based template
 image_template = """
@@ -69,6 +70,9 @@ image_template = """
     - 브랜드: [브랜드]
     - 카테고리: [카테고리]
     - 링크: [링크]
+    - <button data-action="add-to-cart" data-product-name="[상품명]" data-price="[가격]" data-product-img="[이미지 URL]" data-brand="[브랜드]">장바구니에 추가</button>
+    이 버튼은 `onclick` 이벤트를 포함하지 않고, 대신 각 속성 정보를 **data-attributes** 형식으로 추가하도록 합니다. 장바구니 추가 기능은 JavaScript 코드에서 `data-action` 및 `data-product-name` 등을 인식하여 작동하도록 설계되어 있습니다.
+    이 형식을 상품마다 반복해줘서 여러 개의 상품을 추천할 때도 각각 장바구니 버튼이 생성되도록 해줘.
 
     대화 기록:
     {history}

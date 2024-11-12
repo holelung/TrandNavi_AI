@@ -1,4 +1,5 @@
 console.log("chat.js connection");
+
 // 채팅창 챗봇 로고
 const chatbotLogoUrl = $("#chat-messages").data("chatbot-logo");
 
@@ -8,8 +9,7 @@ marked.setOptions({
 
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
-    const initialMessage =
-        "안녕하세요 쇼핑몰 비서 AI서비스 트렌드 네비게이터 입니다.";
+    const initialMessage = "안녕하세요 쇼핑몰 비서 AI서비스 트렌드 네비게이터 입니다.";
     addBotMessage(initialMessage);
 
     // 파일 선택 버튼 클릭 시 파일 선택 창 열기
@@ -46,6 +46,7 @@ function addBotMessage(message) {
 function sendMessage() {
     var userMessage = $("#user-input").val();
     if (userMessage.trim() === "") return;
+    const token = localStorage.getItem("access_token");
 
     $("#chat-messages").append(
         `<div class="flex justify-end mb-4">
@@ -57,8 +58,8 @@ function sendMessage() {
     $("#user-input").val("");
     $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
 
-    var botMessageContainer = $(`
-        <div class="flex items-start mb-4">
+    var botMessageContainer = $(
+        `<div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
         </div>`
@@ -68,6 +69,7 @@ function sendMessage() {
     fetch("/chat", {
         method: "POST",
         headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({ message: userMessage }),
@@ -79,23 +81,32 @@ function sendMessage() {
             reader.read().then(({ done, value }) => {
                 if (done) {
                     console.log("Stream complete");
+
+                    // add-to-cart 버튼에 이벤트 리스너 추가
+                    botMessageContainer.find('[data-action="add-to-cart"]').each(function () {
+                        const productName = $(this).data("product-name");
+                        const price = $(this).data("price");
+                        const productImg = $(this).data("product-img");
+                        const brand = $(this).data("brand");
+
+                        $(this).off("click").on("click", function () {
+                            addToCart(productName, price, productImg, brand);
+                        });
+                    });
                     return;
                 }
+                
                 const chunk = decoder.decode(value);
                 const lines = chunk.split("\n");
                 lines.forEach((line) => {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
+
                         const markedResponse = marked.parse(data.response);
                         const sanitizedResponse = DOMPurify.sanitize(markedResponse);
 
-                        // LLM 응답을 그대로 출력
-                        botMessageContainer
-                            .find(".bot-message-content")
-                            .html(sanitizedResponse);
-                        $("#chat-messages").scrollTop(
-                            $("#chat-messages")[0].scrollHeight
-                        );
+                        botMessageContainer.find(".bot-message-content").html(sanitizedResponse);
+                        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
                     }
                 });
                 readStream();
@@ -117,7 +128,6 @@ function uploadImage() {
     var formData = new FormData();
     formData.append("file", fileInput);
 
-    // 이미지 업로드 중 메시지
     $("#chat-messages").append(
         `<div class="flex justify-end mb-4">
             <div class="bg-blue-500 text-white p-4 rounded-lg">
@@ -127,8 +137,8 @@ function uploadImage() {
     );
     $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
 
-    var botMessageContainer = $(`
-        <div class="flex items-start mb-4">
+    var botMessageContainer = $(
+        `<div class="flex items-start mb-4">
             <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
         </div>`
@@ -156,13 +166,8 @@ function uploadImage() {
                         const markedResponse = marked.parse(data.response);
                         const sanitizedResponse = DOMPurify.sanitize(markedResponse);
 
-                        // LLM 응답을 그대로 출력
-                        botMessageContainer
-                            .find(".bot-message-content")
-                            .html(sanitizedResponse);
-                        $("#chat-messages").scrollTop(
-                            $("#chat-messages")[0].scrollHeight
-                        );
+                        botMessageContainer.find(".bot-message-content").html(sanitizedResponse);
+                        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
                     }
                 });
                 readStream();
@@ -181,3 +186,41 @@ $("#user-input").keypress(function (e) {
         return false;
     }
 });
+
+async function addToCart(productName, price, productImg, brand) {
+    console.log("Adding to cart:", {
+        product_name: productName,
+        price: price,
+        product_img: productImg,
+        product_detail: brand
+    });
+
+    try {
+        const response = await fetch('/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+            },
+            body: JSON.stringify({
+                product_name: productName,
+                price: price,
+                product_img: productImg,
+                product_detail: brand
+            })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log("Server response:", result);
+            alert(result.message || "Item added to cart");
+        } else {
+            console.error("Failed to add item to cart:", result);
+            alert(result.error || 'Failed to add item to cart');
+        }
+    } catch (error) {
+        console.error("Error adding to cart:", error);
+        alert('An error occurred while adding the item to the cart');
+    }
+}
