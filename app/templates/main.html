@@ -240,6 +240,7 @@
             <!-- Chat messages area -->
             <div class="flex-grow p-4 overflow-y-auto bg-white" id="chat-messages"
                 data-chatbot-logo="{{ url_for('static', filename='images/trendNavi-logo.png') }}">
+                <div id="llmResponse"></div>
                 <!-- 챗봇 메시지 예시 블럭-->
                 <!-- <div class="flex items-start mb-4">
                     <img src="{{ url_for('static', filename='images/trandNavi-logo.png') }}" alt="Chatbot Logo"
@@ -255,6 +256,7 @@
                     </div>
                 </div> -->
             </div>
+
 
             <!-- 여기서부터 footer -->
             <div class="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full bg-white">
