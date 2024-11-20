@@ -1,12 +1,16 @@
 import sys
 import os
 
-# 가상환경 활성화
-activate_this = '/home/ubuntu/.pyenv/versions/py3.10/bin/activate_this.py'
-exec(open(activate_this).read(), {'__file__': activate_this})
+# 가상환경 경로를 명시적으로 추가
+venv_path = '/home/ubuntu/.pyenv/versions/py3.11'
 
-# Flask 프로젝트 경로 추가
-sys.path.insert(0, '/home/ubuntu/trendnv/TrandNavi_AI')
+# 가상환경 경로를 시스템 경로에 추가
+sys.path.insert(0, '/home/ubunut/trendnv/TrandNavi_AI/')
+sys.path.insert(0, os.path.join(venv_path, 'lib/python3.11/site-packages'))
 
-# Flask 애플리케이션 가져오기
+# 환경 변수 설정
+os.environ['PATH'] = f"{os.path.join(venv_path, 'bin')}:" + os.environ['PATH']
+os.environ['PYTHONHOME'] = venv_path
+
+# Flask 애플리케이션 로드 
 from run import app as application
