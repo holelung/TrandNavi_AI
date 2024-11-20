@@ -5,7 +5,7 @@ import os
 venv_path = '/home/ubuntu/.pyenv/versions/py3.11'
 
 # 가상환경 경로를 시스템 경로에 추가
-sys.path.insert(0, '/home/ubunut/trendnv/TrandNavi_AI/')
+sys.path.insert(0, '/home/ubuntu/trendnv/TrandNavi_AI/')
 sys.path.insert(0, os.path.join(venv_path, 'lib/python3.11/site-packages'))
 
 # 환경 변수 설정
