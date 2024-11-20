@@ -1,5 +1,10 @@
 import sys
 import os
+from dotenv import load_dotenv
+
+# .env 파일의 절대 경로 지정
+dotenv_path = "/path/to/your_project/.env"
+load_dotenv(dotenv_path)
 
 # 가상환경 경로를 명시적으로 추가
 venv_path = '/home/ubuntu/.pyenv/versions/py3.11'
