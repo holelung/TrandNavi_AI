@@ -40,3 +40,4 @@ from dotenv import load_dotenv
 # .env 파일의 절대 경로 지정
 dotenv_path = "/path/to/your_project/.env"
 load_dotenv(dotenv_path)
+bababa
