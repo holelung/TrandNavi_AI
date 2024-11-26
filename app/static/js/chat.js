@@ -224,7 +224,7 @@ async function addToCart(productName, price, productImg, brand) {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
             body: JSON.stringify({
                 product_name: productName,
