@@ -1,0 +1,418 @@
+[33mcommit 0d14d4a08e65cea3e3d3e6332bfe8e59d5735166[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mllm-branch[m[33m, [m[1;31mupstream/main[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/llm-branch[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Thu Nov 21 09:20:32 2024 +0900
+
+    Delete app.wsgi
+
+[33mcommit 799cbf241f79364f3a7b6b3f631c5ce25ae05a5c[m
+Author: holelung <junho335276@gmail.com>
+Date:   Thu Nov 21 09:17:49 2024 +0900
+
+    /chat routes수정
+
+[33mcommit 6be95884aab2ffc473113eda28b76aa8a8f5f15b[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 18:56:29 2024 +0900
+
+    wsgi ignore 추가
+
+[33mcommit e9ba090269349d421a7410d9405195a11f61e908[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 16:34:47 2024 +0900
+
+    wsgi 수정
+
+[33mcommit 7178d9c78583f59af5b8b6fb0ee2a3c2a8c60ede[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 16:11:54 2024 +0900
+
+    wsgi 수정
+
+[33mcommit dcd6f270eb6b51c5a0ccf32798ee300e54ac4b93[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 16:09:16 2024 +0900
+
+    wsgi 수정
+
+[33mcommit 68ce741006def6f4710deedabe479a37b1ec4c53[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 15:20:17 2024 +0900
+
+    wsgi 수정
+
+[33mcommit 149dea59396f9f88d56dcfc58f986c9b502cd94c[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 15:02:11 2024 +0900
+
+    wsgi 수정
+
+[33mcommit b03e4c91f0ebaefda388e0458f5956d82eaa833e[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 20 14:41:16 2024 +0900
+
+    requirements update
+
+[33mcommit e30cde168f96a161e27c37d8dca74d9ffbdc73d3[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 19 16:43:51 2024 +0900
+
+    wsgi 수정
+
+[33mcommit 763c435c28ce691f3d4f919452c04e8534437fd2[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 19 16:40:20 2024 +0900
+
+    wsgi 수정
+
+[33mcommit 3a5f272cdcfd28cf57910ec17883400f98313b3f[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 19 16:25:05 2024 +0900
+
+    wsgi 수정
+
+[33mcommit b71b06ce300ddfc5d8e90679cb4021443d1c15f9[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 19 15:36:48 2024 +0900
+
+    wsgi 수정
+
+[33mcommit adc5404463d861ad1ac50e1d91d98b09eac31acf[m
+Merge: 08c6eb0 a96ceb8
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 19 15:01:52 2024 +0900
+
+    Merge pull request #14 from holelung/Develop_back
+    
+    서버 설정
+
+[33mcommit a96ceb8efbb6ee07998761cb47f96f68f087b9f4[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 19 15:01:16 2024 +0900
+
+    서버 설정
+
+[33mcommit 08c6eb00490f5ca8a9db1ec73292635a7f888819[m
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Fri Nov 15 23:11:49 2024 +0900
+
+    Update README.md
+
+[33mcommit 3979bca4bdd0a9291a59b67f26747ff3ad7a0fef[m
+Merge: 22e4302 fbe0249
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 12 09:43:20 2024 +0900
+
+    Merge pull request #13 from holelung/Develop
+    
+    Develop
+
+[33mcommit fbe0249088034af91791815b5a2186949851623c[m[33m ([m[1;31mupstream/Develop[m[33m, [m[1;32mDevelop[m[33m)[m
+Merge: 6d3a6b0 d0cba70
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 12 09:42:45 2024 +0900
+
+    Merge pull request #12 from holelung/Develop_back
+    
+    Develop back
+
+[33mcommit d0cba7073937782883d173c1adc5d0ba602c2917[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 12 09:42:08 2024 +0900
+
+    main화면 변경
+
+[33mcommit 96698f750f8db207fab6ccdb5c611fff28572865[m[33m ([m[1;31mupstream/develop_back[m[33m)[m
+Merge: d86b484 b063e4a
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Wed Nov 6 20:21:59 2024 +0900
+
+    Merge pull request #11 from holelung/Develop_back
+    
+    cart load
+
+[33mcommit b063e4ae4297d1cd2425e18dba4c88788d5cdd51[m
+Merge: 213b7e0 d86b484
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Wed Nov 6 20:21:46 2024 +0900
+
+    Merge branch 'develop_back' into Develop_back
+
+[33mcommit 213b7e0fbbaa2b5b76bb9ef11fbc44c836042d79[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 6 20:18:27 2024 +0900
+
+    cart load
+
+[33mcommit d86b4842ab1001256fd91d61f91bb17f98feef77[m
+Merge: c3ef2ee 1e9c459
+Author: lewoo-ai <73825789+lewoo-ai@users.noreply.github.com>
+Date:   Wed Nov 6 20:04:20 2024 +0900
+
+    Merge pull request #10 from lewoo-ai/llm-branch
+    
+    Add new feature
+
+[33mcommit 1e9c459e6d67e1ea2d16ecd34995c043e772eb3d[m
+Author: Woosuk <dldntjr100@naver.com>
+Date:   Wed Nov 6 20:03:00 2024 +0900
+
+    Add new feature
+
+[33mcommit c3ef2eecb5c567641be6df3335c52a3bb90f7e90[m
+Merge: 22e4302 7c05222
+Author: lewoo-ai <73825789+lewoo-ai@users.noreply.github.com>
+Date:   Wed Nov 6 18:55:40 2024 +0900
+
+    Merge pull request #9 from lewoo-ai/llm-branch
+    
+    Llm branch
+
+[33mcommit 7c0522286da6598c18bb17b6e4b4ace8bcc72071[m
+Author: Woosuk <dldntjr100@naver.com>
+Date:   Wed Nov 6 18:51:58 2024 +0900
+
+    Add new feature
+
+[33mcommit 6d3a6b08cb6dfea4e8a390e577c5b96ca3067e53[m
+Merge: e2aa8fc 2111ed4
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Wed Nov 6 18:09:32 2024 +0900
+
+    Merge pull request #8 from holelung/Develop_front
+    
+    Develop front
+
+[33mcommit 2111ed4bb358eeaa18a439aa0f5bac40c456bb9d[m[33m ([m[1;31mupstream/Develop_front[m[33m)[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 6 18:08:23 2024 +0900
+
+    화면 연동완료
+
+[33mcommit 0fc2b8efbb3908536cefcaebc93da57ad8d5ec5d[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 6 17:54:50 2024 +0900
+
+    login logout 연동
+
+[33mcommit f7c6653c8a763a5f9232b608b175f61844ae816f[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 6 15:34:19 2024 +0900
+
+    profile dropdown 설정 추가
+
+[33mcommit e2aa8fc7aafa52cd90ed2d48100c954b7390dd2f[m
+Merge: 54f8c0c 2dda0e3
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Wed Nov 6 15:25:27 2024 +0900
+
+    Merge pull request #7 from holelung/Develop_front
+    
+    Develop front
+
+[33mcommit 2dda0e3bf8f39fee990972ed53c654963923d086[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Nov 6 15:21:08 2024 +0900
+
+    chat.html -> main.html 로 수정 등등
+
+[33mcommit 54f8c0c6cb7056a6dfb9e35a957160f0c6bbafd0[m
+Merge: 897bcbb f2ae529
+Author: lewoo-ai <73825789+lewoo-ai@users.noreply.github.com>
+Date:   Wed Nov 6 13:15:02 2024 +0900
+
+    Merge pull request #6 from lewoo-ai/llm-branch
+    
+    test
+
+[33mcommit f2ae529f8e8d454362e72071513f7675c650ccd1[m
+Author: Woosuk <dldntjr100@naver.com>
+Date:   Wed Nov 6 13:09:51 2024 +0900
+
+    test
+
+[33mcommit 897bcbbf5ee974bf30505ec9ec1a0683d0f26445[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Nov 5 19:58:28 2024 +0900
+
+    Develop 브랜치 시작
+
+[33mcommit 22e4302691e7807c112b5c40875d9c286f4ec986[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Tue Nov 5 19:39:29 2024 +0900
+
+    파일 꼬인거 수정
+
+[33mcommit f284d4938b4c5d21d24037fc698ec070a2f4f807[m
+Merge: 9dabd40 d3073be
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 5 17:17:45 2024 +0900
+
+    Merge pull request #5 from holelung/Develop
+    
+    Develop
+
+[33mcommit d3073be2b4633b1c9f5f98a8baed738ffe57fec4[m
+Merge: cba78ad 9dabd40
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 5 17:17:38 2024 +0900
+
+    Merge branch 'main' into Develop
+
+[33mcommit cba78add047693fb5b60cd247ee2b832115b2127[m
+Merge: cffba46 2745532
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 5 17:09:42 2024 +0900
+
+    Merge pull request #4 from holelung/UI_develop
+    
+    화면 생성
+
+[33mcommit 2745532d622947f19b0b72209f239321088eb8af[m[33m ([m[1;31mupstream/UI_develop[m[33m)[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Tue Nov 5 17:08:30 2024 +0900
+
+    화면 생성
+
+[33mcommit 9dabd401d11d56b0f4aa7023eb9d9010855658fa[m
+Author: lewoo-ai <dldntjr100@naver.com>
+Date:   Tue Nov 5 16:22:59 2024 +0900
+
+    llm
+
+[33mcommit cffba46d87df46f8dbe74de1c0ad45baf2acc398[m
+Merge: d1b437f e09049c
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 5 16:14:13 2024 +0900
+
+    Merge pull request #3 from holelung/UI_develop
+    
+    UI develop
+
+[33mcommit e09049c2f45162a796f5ff7b4f604c59f1957202[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Tue Nov 5 16:01:56 2024 +0900
+
+    remove pyc
+
+[33mcommit 1318526f1530fdf1193c50e8c9cf02a3568b8402[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Tue Nov 5 15:59:43 2024 +0900
+
+    ignore 수정수정
+
+[33mcommit 06171edd35bccd67d03a96a5a486bd8dc24b8db1[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Tue Nov 5 15:56:51 2024 +0900
+
+    ignore 추가
+
+[33mcommit d1b437ff125e0a2f560d953d9cb25e21c2b18c56[m
+Merge: 534ab0f 39490e5
+Author: junhojang <66117028+holelung@users.noreply.github.com>
+Date:   Tue Nov 5 15:33:49 2024 +0900
+
+    Merge pull request #1 from holelung/UI_develop
+    
+    UI develop
+
+[33mcommit 39490e54b377863b79d937f45a94bef1d9ff3391[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Mon Nov 4 16:35:43 2024 +0900
+
+    장바구니, login api
+
+[33mcommit d9c72d899b00540d054b779e0c7c2e874ae3c3fb[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Mon Nov 4 15:56:26 2024 +0900
+
+    ignore 수정
+
+[33mcommit 2894757123de07c0d134e794651f957eb9fe06c4[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Mon Nov 4 12:30:50 2024 +0900
+
+    logout 관련 수정
+
+[33mcommit 8e6b3d354e76c30c1022b2ca52b105456f8c3f0f[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Mon Nov 4 12:08:43 2024 +0900
+
+    사소한 오류수정
+
+[33mcommit 213de75712d7e4aaed2921d0c1f81436ea73fe2f[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Mon Nov 4 12:06:35 2024 +0900
+
+    login, logout api
+
+[33mcommit 5ba3e572bb3568e25ff07f602bea27c81a14bad0[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Sun Nov 3 00:23:34 2024 +0900
+
+    sidebar 메뉴 수정
+
+[33mcommit 3a818c7f5732b81fb9875d1fa6cb08b80f3aabfe[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Sat Nov 2 23:03:47 2024 +0900
+
+    dropdown menu 완성
+
+[33mcommit 534ab0f2cc573b71eede13deffebb7b9cbcb758c[m
+Author: 장준호 <jangjunho@jangjunhoui-MacBookPro.local>
+Date:   Sat Nov 2 20:02:50 2024 +0900
+
+    DB 설정 & dropdown메뉴 추가
+
+[33mcommit 739e806108c6661010f1a80ba1bb6ea532c0d1a6[m
+Author: holelung <junho335276@gmail.com>
+Date:   Thu Oct 31 10:17:16 2024 +0900
+
+    대충 수정하던거
+
+[33mcommit 9625170ff927d66978df8466a4e70aa5d0579d5f[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Oct 29 17:17:14 2024 +0900
+
+    파일구조 변경
+
+[33mcommit 1dfa6a307cbd322fe0c74a9c3733b87d51df8226[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Oct 29 15:43:35 2024 +0900
+
+    프롬프트 링크부분수정
+
+[33mcommit 86211b2a95aa004aefcd01afd09024daa110581d[m
+Author: holelung <junho335276@gmail.com>
+Date:   Tue Oct 22 15:49:17 2024 +0900
+
+    챗 인터페이스 수정
+
+[33mcommit 426d9a1e44bd85fa1243c79fe3fa19cad29912fd[m
+Author: holelung <junho335276@gmail.com>
+Date:   Sat Oct 19 00:36:47 2024 +0900
+
+    채팅 UI 업데이트
+
+[33mcommit 4d8fe0f11192b751b2dc5ddf725ce7e285f3d97a[m
+Author: holelung <junho335276@gmail.com>
+Date:   Fri Oct 18 03:30:45 2024 +0900
+
+    UI 1.0
+
+[33mcommit 75eccecccf078954f7fad13eba46110e267b52d1[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Oct 9 20:44:52 2024 +0900
+
+    000
+
+[33mcommit 9164286243daf9248928dee00d9541575f5621d0[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Oct 9 20:44:30 2024 +0900
+
+    ignore update
+
+[33mcommit 5d086544ef6e9a98592154fcba7a00fafcd777d4[m
+Author: holelung <junho335276@gmail.com>
+Date:   Wed Oct 9 20:42:18 2024 +0900
+
+    first commit
