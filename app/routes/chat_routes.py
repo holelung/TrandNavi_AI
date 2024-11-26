@@ -9,7 +9,7 @@ import json
 chat_bp = Blueprint('chat', __name__)
 
 @chat_bp.route('/chat', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 def chat():
     user_message = request.json['message']
     session_id = request.json.get("session_id", "default_session")
