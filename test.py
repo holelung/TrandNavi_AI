@@ -14,7 +14,7 @@ try:
     connection = pymysql.connect(
         host="localhost",
         user="root",
-        password="dldntjr100",
+        password="8427",
         database="llm",
         port=3306
     )
@@ -26,7 +26,7 @@ except Exception as e:
 from sqlalchemy import create_engine
 
 # SQLAlchemy 엔진 생성 및 연결 테스트
-DATABASE_URI = "mysql+pymysql://root:dldntjr100@localhost:3306/llm"
+DATABASE_URI = "mysql+pymysql://root:8427@localhost:3306/llm"
 engine = create_engine(DATABASE_URI)
 
 try:

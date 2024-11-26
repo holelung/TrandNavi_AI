@@ -9,4 +9,3 @@
 *.pyc
 __pycache__/
 
-*.wsgi

@@ -9,7 +9,7 @@ import json
 chat_bp = Blueprint('chat', __name__)
 
 @chat_bp.route('/chat', methods=['POST'])
-# @jwt_required()
+@jwt_required()
 def chat():
     user_message = request.json['message']
     session_id = request.json.get("session_id", "default_session")
@@ -68,7 +68,10 @@ def chat():
 
         # 네이버 쇼핑 API로 상품 정보 가져오기
         items = get_naver_shopping_data(user_message)
-        product_info = format_product_info(items)
+        if items:
+            product_info = format_product_info(items)
+        else:
+            product_info = "상품 정보를 찾을 수 없습니다."
 
         # 최근 대화 기록 불러오기
         recent_history = redis_memory.get_recent_history(limit=5)
