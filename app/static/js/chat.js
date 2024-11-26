@@ -9,7 +9,8 @@ marked.setOptions({
 
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
-    const initialMessage = "안녕하세요 쇼핑몰 비서 AI서비스 트렌드 네비게이터 입니다.";
+    const initialMessage =
+        "안녕하세요 쇼핑몰 비서 AI서비스 트렌드 네비게이터 입니다.";
     addBotMessage(initialMessage);
 
     // 파일 선택 버튼 클릭 시 파일 선택 창 열기
@@ -83,19 +84,28 @@ function sendMessage() {
                     console.log("Stream complete");
 
                     // add-to-cart 버튼에 이벤트 리스너 추가
-                    botMessageContainer.find('[data-action="add-to-cart"]').each(function () {
-                        const productName = $(this).data("product-name");
-                        const price = $(this).data("price");
-                        const productImg = $(this).data("product-img");
-                        const brand = $(this).data("brand");
+                    botMessageContainer
+                        .find('[data-action="add-to-cart"]')
+                        .each(function () {
+                            const productName = $(this).data("product-name");
+                            const price = $(this).data("price");
+                            const productImg = $(this).data("product-img");
+                            const brand = $(this).data("brand");
 
-                        $(this).off("click").on("click", function () {
-                            addToCart(productName, price, productImg, brand);
+                            $(this)
+                                .off("click")
+                                .on("click", function () {
+                                    addToCart(
+                                        productName,
+                                        price,
+                                        productImg,
+                                        brand
+                                    );
+                                });
                         });
-                    });
                     return;
                 }
-                
+
                 const chunk = decoder.decode(value);
                 const lines = chunk.split("\n");
                 lines.forEach((line) => {
@@ -103,10 +113,15 @@ function sendMessage() {
                         const data = JSON.parse(line.slice(6));
 
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse = DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse =
+                            DOMPurify.sanitize(markedResponse);
 
-                        botMessageContainer.find(".bot-message-content").html(sanitizedResponse);
-                        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+                        botMessageContainer
+                            .find(".bot-message-content")
+                            .html(sanitizedResponse);
+                        $("#chat-messages").scrollTop(
+                            $("#chat-messages")[0].scrollHeight
+                        );
                     }
                 });
                 readStream();
@@ -164,10 +179,15 @@ function uploadImage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse = DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse =
+                            DOMPurify.sanitize(markedResponse);
 
-                        botMessageContainer.find(".bot-message-content").html(sanitizedResponse);
-                        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight);
+                        botMessageContainer
+                            .find(".bot-message-content")
+                            .html(sanitizedResponse);
+                        $("#chat-messages").scrollTop(
+                            $("#chat-messages")[0].scrollHeight
+                        );
                     }
                 });
                 readStream();
@@ -178,10 +198,14 @@ function uploadImage() {
     });
 }
 
-$("#send-button").click(sendMessage);
+$("#send-button").click(function (e) {
+    e.preventDefault();
+    sendMessage();
+});
 
 $("#user-input").keypress(function (e) {
     if (e.which == 13) {
+        e.preventDefault();
         sendMessage();
         return false;
     }
@@ -192,22 +216,22 @@ async function addToCart(productName, price, productImg, brand) {
         product_name: productName,
         price: price,
         product_img: productImg,
-        product_detail: brand
+        product_detail: brand,
     });
 
     try {
-        const response = await fetch('/cart', {
-            method: 'POST',
+        const response = await fetch("/cart", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('jwt_token')}`
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("jwt_token")}`,
             },
             body: JSON.stringify({
                 product_name: productName,
                 price: price,
                 product_img: productImg,
-                product_detail: brand
-            })
+                product_detail: brand,
+            }),
         });
 
         const result = await response.json();
@@ -217,10 +241,10 @@ async function addToCart(productName, price, productImg, brand) {
             alert(result.message || "Item added to cart");
         } else {
             console.error("Failed to add item to cart:", result);
-            alert(result.error || 'Failed to add item to cart');
+            alert(result.error || "Failed to add item to cart");
         }
     } catch (error) {
         console.error("Error adding to cart:", error);
-        alert('An error occurred while adding the item to the cart');
+        alert("An error occurred while adding the item to the cart");
     }
 }
