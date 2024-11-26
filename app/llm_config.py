@@ -2,6 +2,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from app.redis_handler import RedisChatMemory
 from app.services.trend_service import get_related_topics
+from app.services.naver_shopping_service import format_product_info
 #테스트
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
@@ -21,24 +22,27 @@ template = """
         2번. 데스크탑과 노트북 중 어떤 종류의 컴퓨터를 찾고 계신가요?
         3번. 예상하시는 가격대는 어떻게 되나요?"
         
-    충분한 정보가 수집되면 상품 추천을 아래 형식대로 제공해줘:
-    - 상품명: [상품명]
-    - 이미지: <img src='[이미지 URL]' alt='Product Image' style='max-width:100%; max-height:200px;'>
-    - 가격: [가격]원
-    - 브랜드: [브랜드]
-    - 카테고리: [카테고리]
-    - 링크: [링크]
-    - <button data-action="add-to-cart" data-product-name="[상품명]" data-price="[가격]" data-product-img="[이미지 URL]" data-brand="[브랜드]">장바구니에 추가</button>
-    이 버튼은 `onclick` 이벤트를 포함하지 않고, 대신 각 속성 정보를 **data-attributes** 형식으로 추가하도록 합니다. 장바구니 추가 기능은 JavaScript 코드에서 `data-action` 및 `data-product-name` 등을 인식하여 작동하도록 설계되어 있습니다.
-    이 형식을 상품마다 반복해줘서 여러 개의 상품을 추천할 때도 각각 장바구니 버튼이 생성되도록 해줘.
+    상품 정보 {product_info}가 제공되면, 각 상품에 대해 정확히 아래 형식대로 추천을 제공해줘:
     
+    - 상품명: [제공된 상품명 그대로 사용]
+    - 이미지: [제공된 이미지 HTML 태그 그대로 사용] 
+    - 가격: [제공된 가격 그대로 표시]원
+    - 브랜드: [제공된 브랜드명 그대로 사용]
+    - 카테고리: [제공된 카테고리 그대로 사용]
+    - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a>
+    - <button data-action="add-to-cart" 
+        data-product-name="[제공된 상품명]"
+        data-price="[제공된 가격]"
+        data-product-img="[제공된 이미지 URL]"
+        data-brand="[제공된 브랜드명]">장바구니에 추가</button>
+
+    장바구니 버튼을 끝까지 생성해줘.
+    
+    각 요소는 정확히 제공된 형식을 따라야 하며, 특히 이미지 URL과 구매 링크는 변경하지 말고 그대로 사용해야 합니다.
+    모든 HTML 태그는 정확히 위 형식을 따라야 합니다.
+
     추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요?"라고 묻고,
     사용자가 "네"라고 대답하면 "몇 번 상품의 가격 비교가 필요하신가요?"라고 질문해줘.
-    
-    사용자가 몇 번 상품의 가격 비교를 요청하면, 해당 상품의 최저가와 최고가를 가격 비교 API를 통해 가져와서 제공해줘.
-    위 데이터를 바탕으로 다음과 같이 응답해줘:
-    1. 현재 가격 비교한 상품의 최저가와 최고가를 비교하여 2문장으로 설명  
-    2. 사용자에게 도움될 만한 구체적인 가격비교 결론 제공
 
     대화 기록:
     {history}
@@ -136,10 +140,10 @@ def get_llm_with_redis_memory(session_id):
 
     def respond_to_user(user_input):
         redis_memory.add_message(f"User: {user_input}")
-        history = redis_memory.get_recent_history(limit=5)  # 최근 5개 메시지 가져오기
+        history = redis_memory.get_recent_history(limit=2)  # 최근 5개 메시지 가져오기
 
         messages = prompt.format_messages(
-            product_info="",  # 네이버 API 호출로 받은 상품 정보를 여기에 추가 가능
+            product_info=format_product_info,  # 네이버 API 호출로 받은 상품 정보를 여기에 추가 가능
             history="\n".join(history),  # 최근 대화 기록
             human_input=user_input
         )
