@@ -211,7 +211,7 @@ $("#user-input").keypress(function (e) {
     }
 });
 
-async function addToCart(productName, price, productImg, brand) {
+function addToCart(productName, price, productImg, brand) {
     console.log("Adding to cart:", {
         product_name: productName,
         price: price,
@@ -220,7 +220,7 @@ async function addToCart(productName, price, productImg, brand) {
     });
 
     try {
-        const response = await fetch("/cart", {
+        const response = fetch("/cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -234,7 +234,7 @@ async function addToCart(productName, price, productImg, brand) {
             }),
         });
 
-        const result = await response.json();
+        const result = response.json();
 
         if (response.ok) {
             console.log("Server response:", result);
