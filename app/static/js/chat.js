@@ -116,8 +116,22 @@ function sendMessage() {
                         const sanitizedResponse = DOMPurify.sanitize(
                             markedResponse,
                             {
-                                ALLOWED_TAGS: ["img", "a", "div", "span"], // 허용할 태그
-                                ALLOWED_ATTR: ["src", "href", "alt", "class"], // 허용할 속성
+                                ALLOWED_TAGS: [
+                                    "img",
+                                    "a",
+                                    "div",
+                                    "span",
+                                    "li",
+                                    "button",
+                                    "br",
+                                ], // 허용할 태그
+                                ALLOWED_ATTR: [
+                                    "src",
+                                    "href",
+                                    "alt",
+                                    "class",
+                                    "id",
+                                ], // 허용할 속성
                             }
                         );
 
@@ -215,8 +229,7 @@ $("#user-input").keypress(function (e) {
         return false;
     }
 });
-
-function addToCart(productName, price, productImg, brand) {
+async function addToCart(productName, price, productImg, brand) {
     console.log("Adding to cart:", {
         product_name: productName,
         price: price,
@@ -225,11 +238,17 @@ function addToCart(productName, price, productImg, brand) {
     });
 
     try {
-        const response = fetch("/cart", {
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+            alert("You are not logged in. Please log in and try again.");
+            return;
+        }
+
+        const response = await fetch("/cart", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
                 product_name: productName,
@@ -239,17 +258,25 @@ function addToCart(productName, price, productImg, brand) {
             }),
         });
 
-        const result = response.json();
+        console.log("Response status:", response.status);
+        console.log("Response headers:", [...response.headers.entries()]);
 
-        if (response.ok) {
-            console.log("Server response:", result);
+        if (!response.ok) {
+            alert(`HTTP error! Status: ${response.status}`);
+            return;
+        }
+
+        const contentType = response.headers.get("Content-Type");
+        if (contentType && contentType.includes("application/json")) {
+            const result = await response.json();
+            console.log("Response data:", result);
             alert(result.message || "Item added to cart");
         } else {
-            console.error("Failed to add item to cart:", result);
-            alert(result.error || "Failed to add item to cart");
+            console.warn("Unexpected response format.");
+            alert("Item added to cart.");
         }
     } catch (error) {
         console.error("Error adding to cart:", error);
-        alert("An error occurred while adding the item to the cart");
+        alert("An error occurred while adding the item to the cart.");
     }
 }
