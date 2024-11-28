@@ -113,8 +113,13 @@ function sendMessage() {
                         const data = JSON.parse(line.slice(6));
 
                         const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse =
-                            DOMPurify.sanitize(markedResponse);
+                        const sanitizedResponse = DOMPurify.sanitize(
+                            markedResponse,
+                            {
+                                ALLOWED_TAGS: ["img", "a", "div", "span"], // 허용할 태그
+                                ALLOWED_ATTR: ["src", "href", "alt", "class"], // 허용할 속성
+                            }
+                        );
 
                         botMessageContainer
                             .find(".bot-message-content")
