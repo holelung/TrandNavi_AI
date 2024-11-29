@@ -88,7 +88,8 @@ def chat():
         for chunk in llm.stream(messages):
             if chunk.content:
                 full_response += chunk.content
-                yield f"data: {json.dumps({'response': full_response})}\n\n"
+                yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
+
 
         # Redis에 채팅 기록 업데이트
         redis_memory.save_context(user_message, full_response)
