@@ -112,9 +112,9 @@ function sendMessage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
 
-                        const markedResponse = marked.parse(data.response);
+                        // const markedResponse = marked.parse(data.response);
                         const sanitizedResponse = DOMPurify.sanitize(
-                            markedResponse,
+                            data.response,
                             {
                                 ALLOWED_TAGS: [
                                     "img",
