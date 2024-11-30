@@ -14,6 +14,9 @@ cart_bp = Blueprint('cart', __name__)
 @jwt_required()
 def add_to_cart():
     user_id = get_jwt_identity()
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    
     data = request.get_json()
     product_name = data.get('product_name')
     product_detail = data.get('product_detail')
