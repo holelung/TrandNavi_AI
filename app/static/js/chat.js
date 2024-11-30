@@ -26,8 +26,8 @@ $(document).ready(function () {
 
 // bot chat 생성
 function addBotMessage(message) {
-    const markedMessage = marked.parse(message);
-    const sanitizedMessage = DOMPurify.sanitize(markedMessage);
+    // const markedMessage = marked.parse(message);
+    const sanitizedMessage = DOMPurify.sanitize(message);
 
     // LLM 응답을 그대로 출력
     $("#chat-messages").append(
@@ -112,9 +112,9 @@ function sendMessage() {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
 
-                        const markedResponse = marked.parse(data.response);
+                        // const markedResponse = marked.parse(data.response);
                         const sanitizedResponse = DOMPurify.sanitize(
-                            markedResponse,
+                            data.response,
                             {
                                 ALLOWED_TAGS: [
                                     "img",
@@ -197,9 +197,10 @@ function uploadImage() {
                 lines.forEach((line) => {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
-                        const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse =
-                            DOMPurify.sanitize(markedResponse);
+                        // const markedResponse = marked.parse(data.response);
+                        const sanitizedResponse = DOMPurify.sanitize(
+                            data.response
+                        );
 
                         botMessageContainer
                             .find(".bot-message-content")
