@@ -1,5 +1,8 @@
 console.log("chat.js connection");
 
+let accessToken = localStorage.getItem("access_token");
+let refreshToken = localStorage.getItem("refresh_token");
+
 // 채팅창 챗봇 로고
 const chatbotLogoUrl = $("#chat-messages").data("chatbot-logo");
 
@@ -124,6 +127,7 @@ function sendMessage() {
                                     "li",
                                     "button",
                                     "br",
+                                    "pre",
                                 ], // 허용할 태그
                                 ALLOWED_ATTR: [
                                     "src",
@@ -230,6 +234,8 @@ $("#user-input").keypress(function (e) {
         return false;
     }
 });
+
+// 카트에 아이템 추가
 async function addToCart(productName, price, productImg, brand) {
     console.log("Adding to cart:", {
         product_name: productName,
@@ -258,6 +264,15 @@ async function addToCart(productName, price, productImg, brand) {
                 product_detail: brand,
             }),
         });
+        if (response.status === 401) {
+            const refreshSuccess = refreshAccessToken();
+            if (refreshSuccess) {
+                return await addToCart(productName, price, productImg, brand);
+            } else {
+                alert("로그인이 필요합니다.");
+                return null;
+            }
+        }
 
         console.log("Response status:", response.status);
         console.log("Response headers:", [...response.headers.entries()]);
@@ -279,5 +294,35 @@ async function addToCart(productName, price, productImg, brand) {
     } catch (error) {
         console.error("Error adding to cart:", error);
         alert("An error occurred while adding the item to the cart.");
+    }
+}
+
+// 액새스 토큰 갱신
+async function refreshAccessToken() {
+    try {
+        const response = await fetch("/refresh", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${refreshToken}`,
+            },
+        });
+
+        if (response.ok) {
+            const tokens = await response.json();
+            accessToken = tokens.access_token;
+            refreshToken = tokens.refresh_token || refreshToken;
+
+            // 새 토큰을 로컬 스토리지에 저장
+            localStorage.setItem("access_token", accessToken);
+            localStorage.setItem("refresh_token", refreshToken);
+
+            return true;
+        } else {
+            console.error("리프레시 실패:", response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error("네트워크 오류:", error);
+        return false;
     }
 }
