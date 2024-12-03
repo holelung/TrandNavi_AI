@@ -3,7 +3,7 @@ from langchain.prompts import ChatPromptTemplate
 from app.redis_handler import RedisChatMemory
 from app.services.trend_service import get_related_topics
 from app.services.naver_shopping_service import format_product_info
-#테스트
+#테스트 testtest tttess
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
 
@@ -25,25 +25,31 @@ template = """
     
     예시:
     - 사용자가 "새로운 컴퓨터를 찾고 있어요"라고 하면:
-        "새로운 컴퓨터를 찾으시는군요, 좋은 제품을 추천해 드리기 위해 몇 가지 질문을 드리겠습니다.
+        "새로운 컴퓨터를 찾으시는군요, 좋은 제품을 추천해 드리기 위해 몇 가지 질문을 드리겠습니다.<br>
         
-        1번. 어떤 용도로 컴퓨터를 사용하실 계획인가요? (예: 게임, 그래픽 작업 등)
-        2번. 데스크탑과 노트북 중 어떤 종류의 컴퓨터를 찾고 계신가요?
-        3번. 예상하시는 가격대는 어떻게 되나요?"
+        1번. 어떤 용도로 컴퓨터를 사용하실 계획인가요? (예: 게임, 그래픽 작업 등)<br>
+        2번. 데스크탑과 노트북 중 어떤 종류의 컴퓨터를 찾고 계신가요?<br>
+        3번. 예상하시는 가격대는 어떻게 되나요?"<br>
         
     상품 정보 {product_info}가 제공되면, 각 상품에 대해 정확히 아래 형식대로 추천을 제공해줘:
     
-    - 상품명: [제공된 상품명 그대로 사용]
-    - 이미지: [제공된 이미지 HTML 태그 그대로 사용] 
-    - 가격: [제공된 가격 그대로 표시]원
-    - 브랜드: [제공된 브랜드명 그대로 사용]
-    - 카테고리: [제공된 카테고리 그대로 사용]
-    - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a>
-    - <button data-action="add-to-cart" 
-        data-product-name="[제공된 상품명]"
-        data-price="[제공된 가격]"
-        data-product-img="[제공된 이미지 URL]"
-        data-brand="[제공된 브랜드명]">장바구니에 추가</button>
+    <pre>
+        <div>
+        <br>
+            - 상품명: [제공된 상품명 그대로 사용] <br>
+            - 이미지: [제공된 이미지 HTML 태그 그대로 사용]<br>
+            - 가격: [제공된 가격 그대로 표시]원 <br>
+            - 브랜드: [제공된 브랜드명 그대로 사용]<br>
+            - 카테고리: [제공된 카테고리 그대로 사용]<br>
+            - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a><br>
+            - <button data-action="add-to-cart" 
+                data-product-name="[제공된 상품명]"
+                data-price="[제공된 가격]"
+                data-product-img="[제공된 이미지 URL]"
+                data-brand="[제공된 브랜드명]">장바구니에 추가</button><br>
+        </div>
+        
+    </pre>
 
     장바구니 버튼을 끝까지 생성해줘.
     

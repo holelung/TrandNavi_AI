@@ -127,6 +127,7 @@ function sendMessage() {
                                     "li",
                                     "button",
                                     "br",
+                                    "pre",
                                 ], // 허용할 태그
                                 ALLOWED_ATTR: [
                                     "src",
@@ -296,6 +297,7 @@ async function addToCart(productName, price, productImg, brand) {
     }
 }
 
+// 액새스 토큰 갱신
 async function refreshAccessToken() {
     try {
         const response = await fetch("/refresh", {
