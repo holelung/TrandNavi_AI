@@ -9,6 +9,7 @@ from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import get_jwt
+from flask_jwt_extended import verify_jwt_in_request
 
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
@@ -64,11 +65,24 @@ def protected():
 
 # JWT 갱신 토큰 사용
 @auth_bp.route('/refresh', methods=['POST'])
-@jwt_required(refresh=True)
 def refresh():
-    current_user = get_jwt_identity()
-    new_access_token = create_access_token(identity=current_user)
-    return jsonify(access_token=new_access_token)
+    try:     
+        verify_jwt_in_request(refresh=True)
+        
+        # 로그 추가
+        auth_header = request.headers.get('Authorization')
+        print("Authorization Header:", auth_header)
+
+        current_user = get_jwt_identity()
+        print("Current User Identity:", current_user)
+
+        new_access_token = create_access_token(identity=current_user)
+        print("New Access Token:", new_access_token)
+
+        return jsonify(access_token=new_access_token)
+    except Exception as e:
+        print("Refresh error:", e)
+        return jsonify({"msg": str(e)}), 422
 
 
 # 로그아웃
