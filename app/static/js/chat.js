@@ -246,6 +246,7 @@ async function addToCart(productName, price, productImg, brand) {
 
     try {
         const token = localStorage.getItem("access_token");
+        console.log(token);
         if (!token) {
             alert("You are not logged in. Please log in and try again.");
             return;
@@ -303,7 +304,9 @@ async function refreshAccessToken() {
         const response = await fetch("/refresh", {
             method: "POST",
             headers: {
-                Authorization: `Bearer ${refreshToken}`,
+                Authorization: `Bearer ${localStorage.getItem(
+                    "refresh_token"
+                )}`,
             },
         });
 
