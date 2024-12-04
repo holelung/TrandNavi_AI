@@ -6,13 +6,15 @@ from app.models.user_model import User
 
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import verify_jwt_in_request
 
 cart_bp = Blueprint('cart', __name__)
 
 # 장바구니에 상품추가
 @cart_bp.route('/cart', methods=['POST'])
-@jwt_required()
 def add_to_cart():
+    verify_jwt_in_request()
+    
     user_id = get_jwt_identity()
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
