@@ -14,6 +14,7 @@ coloredlogs==15.0.1
 cryptography==43.0.3
 distro==1.9.0
 Flask==3.0.3
+Flask-Cors==5.0.0
 Flask-JWT-Extended==4.6.0
 Flask-Migrate==4.0.7
 Flask-SQLAlchemy==3.1.1
@@ -66,8 +67,3 @@ typing_extensions==4.12.2
 urllib3==2.2.3
 Werkzeug==3.0.6
 yarl==1.17.1
-Flask
-Flask-SQLAlchemy
-Flask-Migrate
-pymysql
-python-dotenv
