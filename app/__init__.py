@@ -7,12 +7,13 @@ from app.models import Base  # Base 임포트
 from flask_jwt_extended import JWTManager
 from app.db.redis_client import redis_client
 from app.utils.token_utils import is_token_blacklisted
-
+from flask_cors import CORS
 
 # Flask 앱 초기화 및 설정 함수
 def create_app():
     app = Flask(__name__)
-
+    CORS(app)
+    
     app.config.from_object(Config)  # config 설정 불러오기
     
     # jwt 설정 
