@@ -37,7 +37,7 @@ template = """
                 data-price="[제공된 가격]"
                 data-product-img="[제공된 이미지 URL]"
                 data-brand="[제공된 브랜드명]"
-                data-product-url="[제공된 링크 URL]>장바구니에 추가
+                data-product-url="[제공된 링크 URL]">장바구니에 추가
             </button><br>
         </div>
     </pre>
@@ -87,7 +87,7 @@ image_template = """
                 data-price="[제공된 가격]"
                 data-product-img="[제공된 이미지 URL]"
                 data-brand="[제공된 브랜드명]"
-                data-product-url="[제공된 링크 URL]>장바구니에 추가
+                data-product-url="[제공된 링크 URL]">장바구니에 추가
             </button><br>
         </div>
     </pre>
