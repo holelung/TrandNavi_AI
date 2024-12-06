@@ -79,7 +79,7 @@ image_template = """
     - 브랜드: [브랜드]
     - 카테고리: [카테고리]
     - 링크: [링크]
-    - <button data-action="add-to-cart" data-product-name="[상품명]" data-price="[가격]" data-product-img="[이미지 URL]" data-brand="[브랜드]">장바구니에 추가</button>
+    - <button data-action="add-to-cart" data-product-name="[상품명]" data-price="[가격]" data-product-img="[이미지 URL]" data-brand="[브랜드]" data-product-url="[링크]">장바구니에 추가</button>
     이 버튼은 `onclick` 이벤트를 포함하지 않고, 대신 각 속성 정보를 **data-attributes** 형식으로 추가하도록 합니다. 장바구니 추가 기능은 JavaScript 코드에서 `data-action` 및 `data-product-name` 등을 인식하여 작동하도록 설계되어 있습니다.
     이 형식을 상품마다 반복해줘서 여러 개의 상품을 추천할 때도 각각 장바구니 버튼이 생성되도록 해줘.
 

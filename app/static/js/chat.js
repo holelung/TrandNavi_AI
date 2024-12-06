@@ -94,6 +94,7 @@ function sendMessage() {
                             const price = $(this).data("price");
                             const productImg = $(this).data("product-img");
                             const brand = $(this).data("brand");
+                            const productUrl = $(this).data("product-url");
 
                             $(this)
                                 .off("click")
@@ -102,7 +103,8 @@ function sendMessage() {
                                         productName,
                                         price,
                                         productImg,
-                                        brand
+                                        brand,
+                                        productUrl
                                     );
                                 });
                         });
@@ -239,12 +241,13 @@ $("#user-input").keypress(function (e) {
 });
 
 // 카트에 아이템 추가
-function addToCart(productName, price, productImg, brand) {
+function addToCart(productName, price, productImg, brand, productUrl) {
     console.log("Adding to cart:", {
         product_name: productName,
         price: price,
         product_img: productImg,
         product_detail: brand,
+        product_url: productUrl,
     });
 
     fetch("/cart", {
@@ -258,13 +261,20 @@ function addToCart(productName, price, productImg, brand) {
             price: price,
             product_img: productImg,
             product_detail: brand,
+            product_url: productUrl,
         }),
     })
         .then((response) => {
             if (response.status === 401) {
                 return refreshAccessToken().then((refreshSuccess) => {
                     if (refreshSuccess) {
-                        return addToCart(productName, price, productImg, brand);
+                        return addToCart(
+                            productName,
+                            price,
+                            productImg,
+                            brand,
+                            productUrl
+                        );
                     } else {
                         alert("로그인이 필요합니다.");
                         return null;
