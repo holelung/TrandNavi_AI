@@ -36,7 +36,8 @@ template = """
                 data-product-name="[제공된 상품명]"
                 data-price="[제공된 가격]"
                 data-product-img="[제공된 이미지 URL]"
-                data-brand="[제공된 브랜드명]">장바구니에 추가
+                data-brand="[제공된 브랜드명]"
+                data-product-url="[제공된 링크 URL]>장바구니에 추가
             </button><br>
         </div>
     </pre>
@@ -73,13 +74,23 @@ image_template = """
         3번. 예상하시는 가격대는 어떻게 되나요?"
         
     충분한 정보가 수집되면 상품 추천을 아래 형식대로 제공해줘:
-    - 상품명: [상품명]
-    - 이미지: <img src='[이미지 URL]' alt='Product Image' style='max-width:100%; max-height:200px;'>
-    - 가격: [가격]원
-    - 브랜드: [브랜드]
-    - 카테고리: [카테고리]
-    - 링크: [링크]
-    - <button data-action="add-to-cart" data-product-name="[상품명]" data-price="[가격]" data-product-img="[이미지 URL]" data-brand="[브랜드]" data-product-url="[링크]">장바구니에 추가</button>
+    <pre>
+        <div>
+            - 상품명: [제공된 상품명 그대로 사용]<br>
+            - 이미지: [제공된 이미지 HTML 태그 그대로 사용]<br>
+            - 가격: [제공된 가격 그대로 표시]원<br>
+            - 브랜드: [제공된 브랜드명 그대로 사용]<br>
+            - 카테고리: [제공된 카테고리 그대로 사용]<br>
+            - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a><br>
+            - <button data-action="add-to-cart" 
+                data-product-name="[제공된 상품명]"
+                data-price="[제공된 가격]"
+                data-product-img="[제공된 이미지 URL]"
+                data-brand="[제공된 브랜드명]"
+                data-product-url="[제공된 링크 URL]>장바구니에 추가
+            </button><br>
+        </div>
+    </pre>
     이 버튼은 `onclick` 이벤트를 포함하지 않고, 대신 각 속성 정보를 **data-attributes** 형식으로 추가하도록 합니다. 장바구니 추가 기능은 JavaScript 코드에서 `data-action` 및 `data-product-name` 등을 인식하여 작동하도록 설계되어 있습니다.
     이 형식을 상품마다 반복해줘서 여러 개의 상품을 추천할 때도 각각 장바구니 버튼이 생성되도록 해줘.
 
