@@ -16,6 +16,9 @@ class User(Base):
 
     # User:Cart 1:N
     cart_items = relationship('Cart', back_populates='user')
+     # Message 관계 추가
+    messages = relationship("Message", back_populates="user")
+
 
     def __init__(self, name, email, password):
         self.name = name

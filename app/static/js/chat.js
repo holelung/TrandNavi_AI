@@ -1,5 +1,8 @@
 console.log("chat.js connection");
 
+let accessToken = localStorage.getItem("access_token");
+let refreshToken = localStorage.getItem("refresh_token");
+
 // 채팅창 챗봇 로고
 const chatbotLogoUrl = $("#chat-messages").data("chatbot-logo");
 
@@ -91,6 +94,7 @@ function sendMessage() {
                             const price = $(this).data("price");
                             const productImg = $(this).data("product-img");
                             const brand = $(this).data("brand");
+                            const productUrl = $(this).data("product-url");
 
                             $(this)
                                 .off("click")
@@ -99,7 +103,8 @@ function sendMessage() {
                                         productName,
                                         price,
                                         productImg,
-                                        brand
+                                        brand,
+                                        productUrl
                                     );
                                 });
                         });
@@ -107,40 +112,44 @@ function sendMessage() {
                 }
 
                 const chunk = decoder.decode(value);
+
                 const lines = chunk.split("\n");
                 lines.forEach((line) => {
                     if (line.startsWith("data: ")) {
-                        const data = JSON.parse(line.slice(6));
-
-                        // const markedResponse = marked.parse(data.response);
-                        const sanitizedResponse = DOMPurify.sanitize(
-                            data.response,
-                            {
-                                ALLOWED_TAGS: [
-                                    "img",
-                                    "a",
-                                    "div",
-                                    "span",
-                                    "li",
-                                    "button",
-                                    "br",
-                                ], // 허용할 태그
-                                ALLOWED_ATTR: [
-                                    "src",
-                                    "href",
-                                    "alt",
-                                    "class",
-                                    "id",
-                                ], // 허용할 속성
-                            }
-                        );
-
-                        botMessageContainer
-                            .find(".bot-message-content")
-                            .html(sanitizedResponse);
-                        $("#chat-messages").scrollTop(
-                            $("#chat-messages")[0].scrollHeight
-                        );
+                        const jsonString = line.slice(6).trim(); // 앞뒤 공백 제거
+                        try {
+                            const data = JSON.parse(jsonString); // JSON 파싱
+                            const sanitizedResponse = DOMPurify.sanitize(
+                                data.response,
+                                {
+                                    ALLOWED_TAGS: [
+                                        "img",
+                                        "a",
+                                        "div",
+                                        "span",
+                                        "li",
+                                        "button",
+                                        "br",
+                                        "pre",
+                                    ],
+                                    ALLOWED_ATTR: [
+                                        "src",
+                                        "href",
+                                        "alt",
+                                        "class",
+                                        "id",
+                                    ],
+                                }
+                            );
+                            botMessageContainer
+                                .find(".bot-message-content")
+                                .html(sanitizedResponse);
+                            $("#chat-messages").scrollTop(
+                                $("#chat-messages")[0].scrollHeight
+                            );
+                        } catch (error) {
+                            console.error("JSON 파싱 실패:", error, jsonString);
+                        }
                     }
                 });
                 readStream();
@@ -230,54 +239,97 @@ $("#user-input").keypress(function (e) {
         return false;
     }
 });
-async function addToCart(productName, price, productImg, brand) {
+
+// 카트에 아이템 추가
+function addToCart(productName, price, productImg, brand, productUrl) {
     console.log("Adding to cart:", {
         product_name: productName,
         price: price,
         product_img: productImg,
         product_detail: brand,
+        product_url: productUrl,
     });
 
-    try {
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-            alert("You are not logged in. Please log in and try again.");
-            return;
-        }
+    fetch("/cart", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+            product_name: productName,
+            price: price,
+            product_img: productImg,
+            product_detail: brand,
+            product_url: productUrl,
+        }),
+    })
+        .then((response) => {
+            if (response.status === 401) {
+                return refreshAccessToken().then((refreshSuccess) => {
+                    if (refreshSuccess) {
+                        return addToCart(
+                            productName,
+                            price,
+                            productImg,
+                            brand,
+                            productUrl
+                        );
+                    } else {
+                        alert("로그인이 필요합니다.");
+                        return null;
+                    }
+                });
+            }
 
-        const response = await fetch("/cart", {
+            console.log("Response status:", response.status);
+            console.log("Response headers:", [...response.headers.entries()]);
+
+            if (!response.ok) {
+                alert(`HTTP error! Status: ${response.status}`);
+                return;
+            }
+
+            return response.json().then((result) => {
+                console.log("Response data:", result);
+                alert(result.message || "Item added to cart");
+            });
+        })
+        .catch((error) => {
+            console.error("Error adding to cart:", error);
+            alert("Failed to add item to cart.");
+        });
+}
+
+// 액새스 토큰 갱신
+async function refreshAccessToken() {
+    try {
+        const response = await fetch("/refresh", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${localStorage.getItem(
+                    "refresh_token"
+                )}`,
             },
-            body: JSON.stringify({
-                product_name: productName,
-                price: price,
-                product_img: productImg,
-                product_detail: brand,
-            }),
         });
 
-        console.log("Response status:", response.status);
-        console.log("Response headers:", [...response.headers.entries()]);
+        if (response.ok) {
+            const tokens = await response.json();
+            accessToken = tokens.access_token;
+            refreshToken = tokens.refresh_token || refreshToken;
 
-        if (!response.ok) {
-            alert(`HTTP error! Status: ${response.status}`);
-            return;
-        }
+            // 새 토큰을 로컬 스토리지에 저장
+            localStorage.setItem("access_token", accessToken);
+            localStorage.setItem("refresh_token", refreshToken);
 
-        const contentType = response.headers.get("Content-Type");
-        if (contentType && contentType.includes("application/json")) {
-            const result = await response.json();
-            console.log("Response data:", result);
-            alert(result.message || "Item added to cart");
+            return true;
         } else {
-            console.warn("Unexpected response format.");
-            alert("Item added to cart.");
+            const errorMsg = await response.text();
+            console.error("리프레시 실패:", response.status, errorMsg);
+            return false;
         }
     } catch (error) {
-        console.error("Error adding to cart:", error);
-        alert("An error occurred while adding the item to the cart.");
+        console.error("네트워크 오류:", error);
+        return false;
     }
 }
