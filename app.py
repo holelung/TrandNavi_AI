@@ -18,7 +18,7 @@ import json
 
 app = Flask(__name__)
 
-# 환경 변수에서 SerpApi, Imgur, OpenAI 및 Naver API 키 로드
+# 환경 변수에서 SerpApi, Imgur, OpenAI 및 Naver API 키 로드 test
 load_dotenv()
 SERPAPI_KEY = os.getenv('SERPAPI_KEY')
 IMGUR_CLIENT_ID = os.getenv('IMGUR_CLIENT_ID')
