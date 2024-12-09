@@ -2,9 +2,8 @@
 from flask import Blueprint, request, jsonify
 from app.db import Session
 from app.models.user_model import User
-from app.db.redis_client import redis_client
+from app.db.redis_client import redis_jwt as redis_client
 
-from flask_jwt_extended import JWTManager
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
 from flask_jwt_extended import jwt_required
@@ -93,9 +92,3 @@ def logout():
     jti = get_jwt()['jti']
     redis_client.setex(jti, timedelta(minutes=30),"true")
     return jsonify(message="Successfully logged out"),200
-
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blocklist(jwt_header, jwt_payload):
-    jti = jwt_payload["jti"]
-    token_in_blocklist = redis_client.get(jti)
-    return token_in_blocklist is not None
