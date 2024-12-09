@@ -17,7 +17,7 @@ class Cart(Base):
     product_img = Column(String(200), nullable=True)
     product_url = Column(String(1000), nullable=True)
     add_at = Column(DateTime, default=datetime.now)
-    
+     
     # User relationship
     user = relationship('User', back_populates='cart_items')
     
