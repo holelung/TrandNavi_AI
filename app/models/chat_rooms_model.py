@@ -1,3 +1,4 @@
+# app/models/chat_rooms_model.py
 
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
