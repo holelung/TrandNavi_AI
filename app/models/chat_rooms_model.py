@@ -1,3 +1,4 @@
+
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
@@ -18,3 +19,4 @@ class ChatRoom(Base):
 
     def __repr__(self) -> str:
         return f"<ChatRoom(room_id={self.room_id}, room_name={self.room_name})>"
+

@@ -1,3 +1,4 @@
+
 # app/models/messages_model.py
 from datetime import datetime
 from sqlalchemy import Column, Integer, ForeignKey, Text, DateTime
@@ -24,3 +25,4 @@ class Message(Base):
 
     def __repr__(self) -> str:
         return f"<Message(message_id={self.message_id}, room_id={self.room_id}, user_id={self.user_id}, content={self.content})>"
+
