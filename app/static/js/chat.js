@@ -70,7 +70,7 @@ function sendMessage() {
     );
     $("#chat-messages").append(botMessageContainer);
 
-    fetch("/chat", {
+    fetch("/chat/createMessage", {
         method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
