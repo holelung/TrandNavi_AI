@@ -1,5 +1,9 @@
 # app/routes/chat_routes.py
 from flask import Blueprint, jsonify, request, Response
+from datetime import datetime
+
+from app.db import redis_client
+from app.db.task import sync_chat_messages
 
 from app.services.naver_shopping_service import get_naver_shopping_data
 from app.services.naver_shopping_service import format_product_info
@@ -141,8 +145,6 @@ def create_chat_room():
 @chat_bp.route('/chat/<int:room_id>/message', methods=['POST'])
 @jwt_required()
 def add_message_to_room(room_id):
-    verify_jwt_in_request()
-
     user_id = get_jwt_identity()
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
@@ -153,19 +155,30 @@ def add_message_to_room(room_id):
     if not content:
         return jsonify({"error": "Message content is required"}), 400
 
+    # 채팅방 존재 여부 확인
     session = Session()
     chat_room = session.query(ChatRoom).filter_by(room_id=room_id).first()
-
-    if not chat_room:
-        session.close()
-        return jsonify({"error": "Chat room not found"}), 404
-
-    new_message = Message(room_id=room_id, user_id=user_id, content=content)
-    session.add(new_message)
-    session.commit()
     session.close()
 
-    return jsonify({"message": "Message added to chat room", "message_id": new_message.message_id}), 201
+    if not chat_room:
+        return jsonify({"error": "Chat room not found"}), 404
+
+    # Redis에 메시지 임시 저장
+    message_data = {
+        "room_id": room_id,
+        "user_id": user_id,
+        "content": content,
+        "timestamp": datetime.now().isoformat()
+    }
+
+    redis_key = f"chat:room:{room_id}:messages"
+    redis_client.rpush(redis_key, json.dumps(message_data))
+
+    # 백그라운드로 동기화 태스크 전달
+    # Celery를 이용한다면 다음과 같이 태스크 호출
+    sync_chat_messages.delay(room_id)
+
+    return jsonify({"message": "Message queued for syncing", "room_id": room_id}), 201
 
 # 특정 채팅방의 메시지 기록 가져오기
 @chat_bp.route('/chat/<int:room_id>/history', methods=['GET'])

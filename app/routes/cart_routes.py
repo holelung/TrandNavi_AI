@@ -87,4 +87,4 @@ def get_cart():
         }
         for item in cart_items
     ]
-    return jsonify(cart_items_list), 200
+    return jsonify(cart_items_list), 200 #

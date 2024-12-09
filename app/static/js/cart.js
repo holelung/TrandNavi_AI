@@ -89,4 +89,4 @@ function removeItem(itemId) {
 }
 
 // 페이지 로드 시 장바구니 아이템을 불러옵니다.
-// document.addEventListener("DOMContentLoaded", loadCartItems);
+// document.addEventListener("DOMContentLoaded", loadCartItems); 

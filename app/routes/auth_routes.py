@@ -2,7 +2,7 @@
 from flask import Blueprint, request, jsonify
 from app.db import Session
 from app.models.user_model import User
-from app.db.redis_client import redis_client
+from app.db.redis_client import redis_jwt as redis_client
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import create_refresh_token
