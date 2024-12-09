@@ -45,7 +45,9 @@ function loadCartItems() {
                 ).toLocaleDateString()}</td>
                 <td class="py-4 px-6 border-b">
                     <div class="flex flex-col space-y-2">
-                        <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" style="max-width: 100px;">바로 구매</button>
+                        <a href="${
+                            item.product_url
+                        }" class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" style="max-width: 100px;">바로 구매</a>
                         <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600" style="max-width: 100px;" onclick="removeItem(${
                             item.id
                         })">삭제</button>
@@ -65,6 +67,25 @@ function loadCartItems() {
 function removeItem(itemId) {
     // 아이템 삭제 로직 작성
     console.log("아이템 삭제:", itemId);
+
+    fetch(`/cart/${itemId}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+    })
+        .then((response) => {
+            if (response.ok) {
+                console.log("아이템이 성공적으로 제거되었습니다.");
+                window.location.reload();
+            } else {
+                console.error("아이템 제거 실패", response.status);
+            }
+        })
+        .catch((error) => {
+            console.error("네트워크 오류", error);
+        });
 }
 
 // 페이지 로드 시 장바구니 아이템을 불러옵니다.

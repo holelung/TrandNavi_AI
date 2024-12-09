@@ -24,13 +24,15 @@ def add_to_cart():
     product_detail = data.get('product_detail')
     product_img = data.get('product_img')
     price = data.get('price')
+    product_url = data.get('product_url')
     
     session = Session()
     new_cart_item = Cart(
         product_name=product_name,
         product_detail=product_detail, 
         product_img=product_img, 
-        price=price
+        price=price,
+        product_url=product_url
     )
     new_cart_item.user_id = user_id
     session.add(new_cart_item)
