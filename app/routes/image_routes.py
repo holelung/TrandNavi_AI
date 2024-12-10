@@ -3,8 +3,8 @@ from werkzeug.utils import secure_filename
 from app.utils.helpers import allowed_file
 from app.services.imgur_service import upload_image_to_imgur
 from app.services.google_lens_service import search_with_google_lens
-from app.services.naver_shopping_service import get_naver_shopping_data, format_product_info
-from app.llm_config import llm, image_prompt, get_image_llm_with_redis_memory
+
+from app.llm_config import  get_image_llm_with_redis_memory
 import json
 import os
 
