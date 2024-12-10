@@ -29,11 +29,14 @@ function createChatRoom(roomName) {
                 console.log(`채팅방 '${data.room_name}'이(가) 생성되었습니다.`);
                 // 방 아이디를 localStorage에 저장
                 // localStorage.setItem("current_room_id", data.room_id);
-
+                console.log("사용자 입력저장");
+                saveMessageToRoom(data.room_id, data.room_name);
+                console.log("llm 답변생성");
                 sendMessageFromStart(data.room_id, data.room_name);
             } else {
                 alert("채팅방 생성에 실패했습니다.");
             }
+            window.location.href = "/main";
         })
         .catch((error) => {
             console.error("Error creating chat room:", error);
@@ -63,6 +66,27 @@ function sendMessageFromStart(room_id, room_name) {
             console.log("Message생성");
         }
         localStorage.setItem("room_id", room_id);
-        // window.location.href = "/main";
     });
+}
+
+function saveMessageToRoom(room_id, room_name) {
+    fetch(`/chat/${room_id}/message`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content: room_name, room_id: room_id }),
+    })
+        .then((response) => {
+            if (response.ok) {
+                console.log("message save success!");
+            } else {
+                console.log("저장실패");
+            }
+        })
+        .catch((error) => {
+            console.error("Error creating save message: ", error);
+            alert("오류발생");
+        });
 }
