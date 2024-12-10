@@ -8,9 +8,6 @@ function getCurrentUserId() {
     return payload.sub; // JWT payload에서 사용자 ID(sub)를 가져옴
 }
 
-// 채팅창 챗봇 로고
-const chatbotLogoUrl = $("#chat-messages").data("trendNavi-logo");
-
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
     const initialMessage =
@@ -64,7 +61,7 @@ function sendMessage() {
 
     var botMessageContainer = $(
         `<div class="flex items-start mb-4">
-            <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
+            <img src="${chatBotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
         </div>`
     );

@@ -157,10 +157,7 @@ def chat():
             if chunk.content:
                 full_response += chunk.content
                 yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
-
         
-
-
         # Redis에 메시지 저장 (이전에는 redis_memory.save_context 사용)
         message_data = {
             "room_id": room_id,
@@ -171,7 +168,7 @@ def chat():
         redis_key = f"chat:room:{room_id}:messages"
         redis_client.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
         print("[DEBUG] Redis에 응답 저장 완료")
-    sync_chat_messages.delay(room_id)
+        sync_chat_messages.delay(room_id)
 
     return Response(generate_response(), content_type='text/event-stream')
 
