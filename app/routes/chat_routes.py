@@ -7,7 +7,7 @@ from app.db.task import sync_chat_messages
 
 from app.services.naver_shopping_service import get_naver_shopping_data
 from app.services.naver_shopping_service import format_product_info
-from app.services.naver_shopping_service import get_price_comparison
+from app.services.naver_shopping_service import get_price_comparison 
 
 from app.services.trend_service import get_related_topics  # 트렌드 서비스 추가
 
@@ -15,7 +15,7 @@ from app.db import Session
 from app.models.chat_rooms_model import ChatRoom
 from app.models.messages_model import Message
 
-from app.llm_config import llm, prompt, trend_template, extract_keyword  # 트렌드 템플릿 및 키워드 추출 함수 추가
+from app.llm_config import llm, prompt, trend_template, extract_keyword ,LLMConfig
 from app.redis_handler import RedisChatMemory
 
 from flask_jwt_extended import jwt_required
@@ -26,6 +26,7 @@ import json
 
 
 chat_bp = Blueprint('chat', __name__)
+llm_config = LLMConfig()
 
 # 봇에게 받는 메시지
 @chat_bp.route('/chat/createMessage', methods=['POST'])
@@ -116,25 +117,49 @@ def chat():
             yield f"data: {json.dumps({'response': price_comparison_response})}\n\n"
             return
 
-        # 일반적인 상품 정보 조회
+        
+        print("[DEBUG] 네이버 쇼핑 API 호출 시작")
+
         items = get_naver_shopping_data(user_message)
         if items:
+            print(f"[DEBUG] 네이버 쇼핑 API 호출 성공 - {len(items)}개의 상품 반환")
             product_info = format_product_info(items)
+            print("[DEBUG] 상품 정보 포맷 완료")
+            print("[DEBUG] 최종 상품 포맷팅 정보:")
+            print(product_info)  # 최종 포맷된 상품 정보 출력
+            
+            # LLMConfig에 product_info 저장
+            llm_config.set_product_info(product_info)
+            print("[DEBUG] llm_config에 전달된 상품 정보:")
+            print(llm_config.get_product_info())  # LLMConfig에 저장된 데이터 출력
         else:
+            print("[DEBUG] 네이버 쇼핑 API에서 상품 정보를 찾을 수 없음")
             product_info = "상품 정보를 찾을 수 없습니다."
+            llm_config.set_product_info(product_info)
+            print("[DEBUG] llm_config에 전달된 상품 정보:")
+            print(llm_config.get_product_info())  
 
-        recent_history = redis_memory.get_recent_history(limit=5)
+
+        # LLM 프롬프트 생성
+        print("[DEBUG] LLM 프롬프트 생성 시작")
+
         messages = prompt.format_messages(
-            product_info=product_info,
-            history="\n".join(recent_history),
+            product_info=llm_config.get_product_info(),  # LLMConfig에서 product_info 가져오기
+            history="\n".join(redis_memory.get_recent_history(limit=5)),
             human_input=user_message
         )
+        print("[DEBUG] LLM 프롬프트 생성 완료")
 
+
+        # 응답 스트리밍
         full_response = ""
         for chunk in llm.stream(messages):
             if chunk.content:
                 full_response += chunk.content
                 yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
+
+        
+
 
         # Redis에 메시지 저장 (이전에는 redis_memory.save_context 사용)
         message_data = {
@@ -145,9 +170,11 @@ def chat():
         }
         redis_key = f"chat:room:{room_id}:messages"
         redis_client.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
-
+        print("[DEBUG] Redis에 응답 저장 완료")
     sync_chat_messages.delay(room_id)
+
     return Response(generate_response(), content_type='text/event-stream')
+
 
 
 # 새 채팅방 생성

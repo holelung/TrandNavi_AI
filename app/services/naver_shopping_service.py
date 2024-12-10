@@ -43,9 +43,14 @@ def get_google_image_url(product_name):
         # 첫 번째 이미지 URL 가져오기
         if image_results:
             first_image_url = image_results[0].get("original")
-            print(f"가져온 이미지 URL for '{product_name}':", first_image_url)  # 첫 번째 이미지 URL 출력
+            print(f"이미지검색으로가져온 '{product_name}'")
+            print(f"가져온 이미지 URL for '{product_name}': {first_image_url}")  # 첫 번째 이미지 URL 출력
             return first_image_url  # 첫 번째 이미지의 URL 반환
-    
+        else:
+            print(f"'{product_name}'에 대한 이미지를 찾을 수 없습니다.")  # 이미지 결과가 없을 때
+    else:
+        print(f"'{product_name}'에 대한 API 요청 실패. 상태 코드: {response.status_code}")  # 요청 실패
+
     # 실패 시 None 반환
     return None
 
@@ -55,6 +60,8 @@ def format_product_info(items):
     for item in items:
         # 각 상품명으로 이미지를 검색하여 URL 가져오기
         image_url = get_google_image_url(item['title'])
+        if not image_url:
+            print(f"'{item['title']}'에 대한 이미지 URL을 가져오지 못했습니다.")  # 이미지 URL 가져오기 실패 시 디버깅 출력
         image_html = f"<img src='{image_url}' alt='Product Image' style='max-width:100%; max-height:200px;'>"
         link = f"https://search.shopping.naver.com/search/all?query={quote(item['title'])}"
         formatted_item = (
@@ -66,6 +73,7 @@ def format_product_info(items):
             f"링크: {link}\n"
         )
         formatted_items.append(formatted_item)
+    print(f"'{item['title']}'이게 상품명이에요") 
     return "\n".join(formatted_items)
 
 

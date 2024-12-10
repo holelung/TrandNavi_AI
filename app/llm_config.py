@@ -3,58 +3,48 @@ from langchain.prompts import ChatPromptTemplate
 from app.redis_handler import RedisChatMemory
 from app.services.trend_service import get_related_topics
 from app.services.naver_shopping_service import format_product_info
+
 #테스트 testtest tttess
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
 
 template = """
-    너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야.
-    사용자가 요청한 상품과 관련된 정보를 충분히 얻기 위해 필요한 세 가지 질문을 번호 형식으로 자동 생성하고,
-    질문이 충분히 충족되면 최적의 상품 추천을 제공해줘.
-    
-    질문을 생성할 때 항상 질문 앞에 "1번", "2번", "3번"과 같이 번호를 붙여 제공해.
-    
-    예시:
-    - 사용자가 "새로운 컴퓨터를 찾고 있어요"라고 하면:
-        "새로운 컴퓨터를 찾으시는군요, 좋은 제품을 추천해 드리기 위해 몇 가지 질문을 드리겠습니다.<br>
-        
-        1번. 어떤 용도로 컴퓨터를 사용하실 계획인가요? (예: 게임, 그래픽 작업 등)<br>
-        2번. 데스크탑과 노트북 중 어떤 종류의 컴퓨터를 찾고 계신가요?<br>
-        3번. 예상하시는 가격대는 어떻게 되나요?"<br>
-        
-    상품 정보 {product_info}가 제공되면, 각 상품에 대해 정확히 아래 형식대로 추천을 제공해줘:
-    
-    <pre>
-        <div>
-            - 상품명: [제공된 상품명 그대로 사용]<br>
-            - 이미지: [제공된 이미지 HTML 태그 그대로 사용]<br>
-            - 가격: [제공된 가격 그대로 표시]원<br>
-            - 브랜드: [제공된 브랜드명 그대로 사용]<br>
-            - 카테고리: [제공된 카테고리 그대로 사용]<br>
-            - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a><br>
-            - <button data-action="add-to-cart" 
-                data-product-name="[제공된 상품명]"
-                data-price="[제공된 가격]"
-                data-product-img="[제공된 이미지 URL]"
-                data-brand="[제공된 브랜드명]"
-                data-product-url="[제공된 링크 URL]">장바구니에 추가
-            </button><br>
-        </div>
-    </pre>
+너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야.
+사용자가 요청한 상품과 관련된 정보를 충분히 얻기 위해 필요한 세 가지 질문을 번호 형식으로 자동 생성하고,
+질문이 충분히 충족되면 최적의 상품 추천을 제공해줘.
 
-    장바구니 버튼을 끝까지 생성해줘.
-    
-    각 요소는 정확히 제공된 형식을 따라야 하며, 특히 이미지 URL과 구매 링크는 변경하지 말고 그대로 사용해야 합니다.
-    모든 HTML 태그는 정확히 위 형식을 따라야 합니다.
+아래는 추천할 상품 정보야. 이 정보를 기반으로 정확히 추천해줘:
+{product_info}
 
-    추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요?"라고 묻고,
-    사용자가 "네"라고 대답하면 "몇 번 상품의 가격 비교가 필요하신가요?"라고 질문해줘.
+상품 정보는 제공된 데이터를 기반으로 아래 형식을 따라야 해:
+<pre>
+    <div>
+        - 상품명: [제공된 상품명 그대로 사용]<br>
+        - 이미지: [제공된 이미지 HTML 태그 그대로 사용]<br>
+        - 가격: [제공된 가격 그대로 표시]원<br>
+        - 브랜드: [제공된 브랜드명 그대로 사용]<br>
+        - 카테고리: [제공된 카테고리 그대로 사용]<br>
+        - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a><br>
+        - <button data-action="add-to-cart" 
+            data-product-name="[제공된 상품명]"
+            data-price="[제공된 가격]"
+            data-product-img="[제공된 이미지 URL]"
+            data-brand="[제공된 브랜드명]"
+            data-product-url="[제공된 링크 URL]">장바구니에 추가
+        </button><br>
+    </div>
+</pre>
 
-    대화 기록:
-    {history}
+모든 HTML 태그는 정확히 위 형식을 따라야 하며, 특히 이미지 URL과 구매 링크는 변경하지 말고 그대로 사용해야 합니다.
 
-    사용자: {human_input}
-    트렌드 네비게이터:
+추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요?"라고 묻고,
+사용자가 "네"라고 대답하면 "몇 번 상품의 가격 비교가 필요하신가요?"라고 질문해줘.
+
+대화 기록:
+{history}
+
+사용자: {human_input}
+트렌드 네비게이터:
 """
 
 
@@ -149,30 +139,21 @@ trend_prompt = ChatPromptTemplate.from_template(trend_template)
 # 키워드 추출 프롬프트 템플릿
 keyword_prompt = ChatPromptTemplate.from_template(keyword_extract_template)
 
-# Redis 기반 텍스트 메모리 설정 함수
-def get_llm_with_redis_memory(session_id):
-    """Redis 기반의 텍스트 LLM 메모리 설정"""
-    redis_memory = RedisChatMemory(session_id)
+class LLMConfig:
+    def __init__(self):
+        self.product_info = None  # 초기값 설정
 
-    def respond_to_user(user_input):
-        redis_memory.add_message(f"User: {user_input}")
-        history = redis_memory.get_recent_history(limit=2)  # 최근 5개 메시지 가져오기
+    def set_product_info(self, product_info):
+        """
+        외부에서 전달받은 product_info 데이터를 저장.
+        """
+        self.product_info = product_info
 
-        messages = prompt.format_messages(
-            product_info=format_product_info,  # 네이버 API 호출로 받은 상품 정보를 여기에 추가 가능
-            history="\n".join(history),  # 최근 대화 기록
-            human_input=user_input
-        )
-
-        response = ""
-        for chunk in llm.stream(messages):
-            if chunk.content:
-                response += chunk.content
-        
-        redis_memory.add_message(f"LLM: {response}")
-        return response
-
-    return respond_to_user
+    def get_product_info(self):
+        """
+        저장된 product_info 데이터를 반환.
+        """
+        return self.product_info
 
 # Redis 기반 이미지 메모리 설정 함수
 def get_image_llm_with_redis_memory(session_id):
