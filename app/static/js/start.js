@@ -31,9 +31,6 @@ function createChatRoom(roomName) {
                 // localStorage.setItem("current_room_id", data.room_id);
 
                 sendMessageFromStart(data.room_id, data.room_name);
-
-                // main 화면으로 이동
-                window.location.href = "/main"; // 예: /chat 페이지로 이동
             } else {
                 alert("채팅방 생성에 실패했습니다.");
             }
@@ -49,10 +46,23 @@ function sendMessageFromStart(room_id, room_name) {
         method: "POST",
         headers: {
             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            "Contnet-Type": "application/json",
+            "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: room_name }, { room_id: room_id }),
+        body: JSON.stringify({ message: room_name, room_id: room_id }),
     }).then((response) => {
-        window.location.href = "/main";
+        if (response.status === 401) {
+            return refreshAccessToken().then((refreshSuccess) => {
+                if (refreshSuccess) {
+                    return sendMessageFromStart(room_id, room_name);
+                } else {
+                    alert("로그인이 필요합니다.");
+                    return null;
+                }
+            });
+        } else {
+            console.log("Message생성");
+        }
+        localStorage.setItem("room_id", room_id);
+        // window.location.href = "/main";
     });
 }

@@ -2,7 +2,8 @@
 from flask import Blueprint, jsonify, request, Response
 from datetime import datetime
 
-from app.db import redis_client
+from app.db.redis_client import get_redis_message
+from app.db.redis_client import get_recent_history 
 from app.db.task import sync_chat_messages
 
 from app.services.naver_shopping_service import get_naver_shopping_data
@@ -16,7 +17,6 @@ from app.models.chat_rooms_model import ChatRoom
 from app.models.messages_model import Message
 
 from app.llm_config import llm, prompt, trend_template, extract_keyword ,LLMConfig
-from app.redis_handler import RedisChatMemory
 
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import verify_jwt_in_request
@@ -34,13 +34,14 @@ def chat():
     verify_jwt_in_request()
     
     user_id = get_jwt_identity()    
-    session_id = request.json.get(user_id)
-    redis_memory = RedisChatMemory(session_id)
+    print(user_id)
+    session_id = str(user_id)
+    redis_conn = get_redis_message()
 
     # 유저가 입력한 메시지
     user_message = request.json['message']
     # 발급받은 채팅방 번호
-    room_id = request.json.get("room_id")
+    room_id = request.json['room_id']
 
     if room_id is None:
         return jsonify({"error": "room_id is required"}), 400
@@ -62,7 +63,7 @@ def chat():
                         keyword=keyword,
                         rising_topics=rising_topics,
                         top_topics=top_topics,
-                        history="\n".join(redis_memory.get_recent_history(limit=5)),
+                        history="\n".join(get_recent_history(session_id=session_id, limit=5)),
                         human_input=user_message
                     )
 
@@ -81,7 +82,7 @@ def chat():
                         "timestamp": datetime.now().isoformat()
                     }
                     redis_key = f"chat:room:{room_id}:messages"
-                    redis_client.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+                    redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
 
                     return
 
@@ -95,7 +96,7 @@ def chat():
                         "timestamp": datetime.now().isoformat()
                     }
                     redis_key = f"chat:room:{room_id}:messages"
-                    redis_client.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+                    redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
                     yield f"data: {json.dumps({'response': error_message})}\n\n"
                     return
         
@@ -112,7 +113,7 @@ def chat():
                 "timestamp": datetime.now().isoformat()
             }
             redis_key = f"chat:room:{room_id}:messages"
-            redis_client.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+            redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
             
             yield f"data: {json.dumps({'response': price_comparison_response})}\n\n"
             return
@@ -145,7 +146,7 @@ def chat():
 
         messages = prompt.format_messages(
             product_info=llm_config.get_product_info(),  # LLMConfig에서 product_info 가져오기
-            history="\n".join(redis_memory.get_recent_history(limit=5)),
+            history="\n".join(get_recent_history(session_id=session_id, limit=5)),
             human_input=user_message
         )
         print("[DEBUG] LLM 프롬프트 생성 완료")
@@ -166,7 +167,7 @@ def chat():
             "timestamp": datetime.now().isoformat()
         }
         redis_key = f"chat:room:{room_id}:messages"
-        redis_client.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+        redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
         print("[DEBUG] Redis에 응답 저장 완료")
         sync_chat_messages.delay(room_id)
 
@@ -193,7 +194,7 @@ def create_chat_room():
     session.commit()
     room_id = new_chat_room.room_id
     session.close()
-
+    
     return jsonify({"message": "Chat room created", "room_id": room_id, "room_name": room_name}), 201
 
 
@@ -227,9 +228,11 @@ def add_message_to_room(room_id):
         "content": content,
         "timestamp": datetime.now().isoformat()
     }
+    redis_conn = get_redis_message()  # redis_message 클라이언트 객체 얻기
+
 
     redis_key = f"chat:room:{room_id}:messages"
-    redis_client.rpush(redis_key, json.dumps(message_data))
+    redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
 
     # 백그라운드로 동기화 태스크 전달
     # Celery를 이용한다면 다음과 같이 태스크 호출
