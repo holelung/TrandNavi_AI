@@ -22,6 +22,10 @@ def register():
 def cart():
     return render_template('cart.html')
 
+@main_bp.route('/start')
+def start():
+    return render_template('start.html')
+
 @main_bp.route('/main')
 def main():
     return render_template('main.html')

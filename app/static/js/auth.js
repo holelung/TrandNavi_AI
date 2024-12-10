@@ -1,22 +1,5 @@
 // app/static/js/auth.js
 
-// 로그인 확인 함수
-function checkLoginStatus() {
-    const token = localStorage.getItem("access_token"); // 토큰 가져오기
-    const user_name = localStorage.getItem("user_name");
-
-    if (!token) {
-        // 토큰이 없으면 로그인 페이지로 리디렉션
-        alert("로그인이 필요합니다.");
-        window.location.href = "/login";
-    } else {
-        // 로그인 상태가 확인된 경우 로그 메시지 출력 (필요 시 다른 작업 수행 가능)
-        console.log("로그인 상태 확인: 로그인 되어 있습니다.");
-        // 필요한 경우 서버에 토큰 유효성 확인 요청 가능
-        document.getElementById("user_name").innerText = user_name;
-    }
-}
-
 function click_login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -63,7 +46,7 @@ function loadChat() {
     }
 
     // 토큰이 있을 때 바로 main 화면으로 이동
-    window.location.href = "/main";
+    window.location.href = "/start";
 }
 
 // cart
@@ -117,4 +100,37 @@ function sign_up() {
             console.error("회원가입 오류:", error);
             alert("동일한 계정이 존재합니다.");
         });
+}
+
+// 액새스 토큰 갱신
+async function refreshAccessToken() {
+    try {
+        const response = await fetch("/refresh", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem(
+                    "refresh_token"
+                )}`,
+            },
+        });
+
+        if (response.ok) {
+            const tokens = await response.json();
+            accessToken = tokens.access_token;
+            refreshToken = tokens.refresh_token || refreshToken;
+
+            // 새 토큰을 로컬 스토리지에 저장
+            localStorage.setItem("access_token", accessToken);
+            localStorage.setItem("refresh_token", refreshToken);
+
+            return true;
+        } else {
+            const errorMsg = await response.text();
+            console.error("리프레시 실패:", response.status, errorMsg);
+            return false;
+        }
+    } catch (error) {
+        console.error("네트워크 오류:", error);
+        return false;
+    }
 }
