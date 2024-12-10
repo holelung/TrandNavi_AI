@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('cart', sa.Column('product_url', sa.String(length=255), nullable=True))
+    pass
 
 
 
