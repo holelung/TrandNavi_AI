@@ -42,3 +42,4 @@ class RedisChatMemory:
     def clear_memory(self):
         """채팅 기록 초기화"""
         redis_client.delete(self.session_id)
+
