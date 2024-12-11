@@ -160,7 +160,12 @@ def chat():
                 full_response += chunk.content
                 yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
 
-        
+        user_message_data = {
+            "room_id": room_id,
+            "user_id": user_id,
+            "content": user_message,
+            "timestamp": datetime.now().isoformat()
+        }
         # Redis에 메시지 저장 (이전에는 redis_memory.save_context 사용)
         message_data = {
             "room_id": room_id,
@@ -169,9 +174,11 @@ def chat():
             "timestamp": datetime.now().isoformat()
         }
         redis_key = f"chat:room:{room_id}:messages"
+        redis_conn.rpush(redis_key, json.dumps(user_message_data, ensure_ascii=False))  
         redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+        
         print("[DEBUG] Redis에 응답 저장 완료")
-        sync_chat_messages.delay(room_id)
+        # sync_chat_messages.delay(room_id)
 
 
     return Response(generate_response(), content_type='text/event-stream')
@@ -323,5 +330,6 @@ def delete_chat_room(room_id):
 def chat_room(chat_room_id):
     # Redis에서 채팅 데이터 가져오기
     chat_data = redis_message.lrange(f"chat:room:{chat_room_id}:messages", 0, -1)  # Redis 리스트의 모든 데이터 가져오기
+    
     messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
     return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
