@@ -19,31 +19,7 @@
     <script>
         const chatBotLogoUrl = "{{ url_for('static', filename='images/trendNavi-logo.png') }}"
     </script>
-    <style>
-        .intro-container {
-            font-size: 32px;
-            /* 48pt 정도의 사이즈 (1pt ≈ 1.333px, 48pt ≈ 64px) */
-            font-family: sans-serif;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 4px solid #333;
-            font-weight: bold;
-            /* 커서처럼 보이게 하는 오른쪽 border */
-            animation: blink 0.75s steps(1) infinite alternate;
-        }
 
-        /* 커서 깜박임 애니메이션 */
-        @keyframes blink {
-            0% {
-                border-color: transparent;
-            }
-
-            100% {
-                border-color: #333;
-            }
-        }
-    </style>
 </head>
 
 <body class="h-screen bg-gray-100">
@@ -64,7 +40,7 @@
                         </svg>
                     </button>
                     <!-- 새 채팅 버튼 -->
-                    <button aria-label="새 채팅" data-testid="create-new-chat-button"
+                    <button id="create-room-button" aria-label="새 채팅" data-testid="create-new-chat-button"
                         class="h-10 rounded-lg px-2 hover:bg-gray-600"><svg width="24" height="24" viewBox="0 0 24 24"
                             fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon-xl-heavy">
                             <path
@@ -73,7 +49,7 @@
                         </svg>
                     </button>
                 </div>
-                <div class="flex-grow">
+                <div class="flex flex-col">
                     <h4 class="text-xl font-semibold mb-4">Chat History</h4>
                     <!-- Chat history list here -->
                     <div class="space-y-2">
@@ -83,9 +59,9 @@
                             </div>
                         </ol>
                     </div>
-                    <div class="flex justify-end mt-auto">
+                    <div class="flex justify-end mt-4">
                         <button onclick="click_cart()"
-                            class="bottom-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            class="absolute bottom-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             장바구니
                         </button>
 
@@ -107,7 +83,7 @@
                                 fill="currentColor"></path>
                         </svg>
                     </button>
-                    <a href="{{ url_for('main.main') }}" class="flex items-center"
+                    <a href="{{ url_for('main.start') }}" class="flex items-center"
                         style="text-decoration: none; color:white">
                         <img src="{{ url_for('static', filename='images/trendNavi-logo.png') }}" alt="Chatbot Logo"
                             class="mr-2 w-12 h-12 rounded-lg">
@@ -200,56 +176,90 @@
                 </div>
             </div>
 
-            <!-- 메인 화면 (채팅 스타트) -->
-            <div class="flex-1 w-full bg-white items-center flex justify-center flex-col">
-                <div class="flex justify-center p-3 mb-2">
-                    <div class="intro-container" id="typingTarget"></div>
+            <!-- Chat messages area -->
+            <div class="flex-grow p-4 overflow-y-auto bg-white"
+                data-chatbot-logo="{{ url_for('static', filename='images/trendNavi-logo.png') }}">
+                {% for message in messages %}
+                {% if message.user_id == "BotMessage" %}
+                <!-- 챗봇의 메시지 -->
+                <div class="flex items-start mb-4">
+                    <img src="{{ chatBotLogoUrl }}" alt="Chatbot-Logo" class="mr-2 w-12 h-12 rounded-full">
+                    <div class="bg-gray-100 p-4 rounded-lg bot-message-content">
+                        {{ message.content|safe }}
+                    </div>
                 </div>
-                <!-- INPUT 창 -->
-                <form class="w-full max-w-xl" type="button" aria-haspopup="dialog" aria-expanded="false"
-                    aria-controls="radix-:R6j4pai4lj5:" data-state="closed">
-                    <div class="relative flex flex-col">
-                        <div class="group relative flex w-full items-center justify-center">
-                            <!-- 실질적인 동작 코드 -->
-                            <div class="flex items-center w-full p-3 rounded-full bg-gray-100 shadow-sm">
-                                <!-- 첨부 파일 버튼 -->
-                                <button id="upload-btn" type="button"
-                                    class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 hover:text-black focus:outline-none">
-                                    <!-- 첨부 파일 아이콘 -->
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M9 7C9 4.23858 11.2386 2 14 2C16.7614 2 19 4.23858 19 7V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9C5 8.44772 5.44772 8 6 8C6.55228 8 7 8.44772 7 9V15C7 17.7614 9.23858 20 12 20C14.7614 20 17 17.7614 17 15V7C17 5.34315 15.6569 4 14 4C12.3431 4 11 5.34315 11 7V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V9C13 8.44772 13.4477 8 14 8C14.5523 8 15 8.44772 15 9V15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15V7Z"
-                                            fill="currentColor"></path>
-                                    </svg>
-                                    <!-- 첨부 파일 아이콘 -->
-                                </button>
-                                <input type="file" id="start-image-input" accept="image/*" style="display: none;">
-                                <!-- 메시지 입력창 -->
-                                <input type="text" id="start-user-input" placeholder="메시지 TrandNV"
-                                    class="flex-grow bg-transparent border-0 px-4 py-2 text-gray-700 focus:outline-none" />
+                {% else %}
+                <!-- 사용자의 메시지 -->
+                <div class="flex justify-end mb-4">
+                    <div class="bg-blue-500 text-white p-4 rounded-lg">
+                        {{ message.content|safe}}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                <div id="chat-messages"></div>
 
-                                <!-- 전송 버튼 -->
-                                <button id="start-send-button"
-                                    class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 hover:text-black focus:outline-none">
-                                    <!-- 전송 아이콘 -->
-                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" class="icon-2xl">
-                                        <path fill-rule="evenodd" clip-rule="evenodd"
-                                            d="M15.1918 8.90615C15.6381 8.45983 16.3618 8.45983 16.8081 8.90615L21.9509 14.049C22.3972 14.4953 22.3972 15.2189 21.9509 15.6652C21.5046 16.1116 20.781 16.1116 20.3347 15.6652L17.1428 12.4734V22.2857C17.1428 22.9169 16.6311 23.4286 15.9999 23.4286C15.3688 23.4286 14.8571 22.9169 14.8571 22.2857V12.4734L11.6652 15.6652C11.2189 16.1116 10.4953 16.1116 10.049 15.6652C9.60265 15.2189 9.60265 14.4953 10.049 14.049L15.1918 8.90615Z"
-                                            fill="currentColor"></path>
-                                    </svg>
-                                </button>
-                            </div>
+            </div>
+
+
+            <!-- 여기서부터 footer -->
+            <div class="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full bg-white">
+                <div>
+
+                    <div class="m-auto text-base px-3 md:px-4 w-full md:px-5 lg:px-4 xl:px-5">
+                        <!-- INPUT 창 -->
+                        <div class="mx-auto flex flex-1 justify-center gap-4 text-base md:gap-5 lg:gap-6">
+                            <form class="w-full" type="button" aria-haspopup="dialog" aria-expanded="false"
+                                aria-controls="radix-:R6j4pai4lj5:" data-state="closed">
+                                <div class="relative flex h-full max-w-full flex-1 flex-col">
+                                    <div class="absolute bottom-full left-0 right-0 z-20"></div>
+                                    <div class="group relative flex w-full items-center justify-center">
+                                        <div class="absolute bottom-16 space-y-2 z-20"></div>
+                                        <!-- 실질적인 동작 코드 -->
+                                        <div
+                                            class="flex items-center w-full max-w-3xl p-2 rounded-full bg-gray-100 shadow-sm mx-auto">
+                                            <!-- 첨부 파일 버튼 -->
+                                            <button id="upload-btn" type="button"
+                                                class="flex items-center justify-center h-8 w-8 rounded-full text-gray-500 hover:text-black focus:outline-none">
+                                                <!-- 첨부 파일 아이콘 -->
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M9 7C9 4.23858 11.2386 2 14 2C16.7614 2 19 4.23858 19 7V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9C5 8.44772 5.44772 8 6 8C6.55228 8 7 8.44772 7 9V15C7 17.7614 9.23858 20 12 20C14.7614 20 17 17.7614 17 15V7C17 5.34315 15.6569 4 14 4C12.3431 4 11 5.34315 11 7V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V9C13 8.44772 13.4477 8 14 8C14.5523 8 15 8.44772 15 9V15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15V7Z"
+                                                        fill="currentColor"></path>
+                                                </svg>
+                                                <!-- 첨부 파일 아이콘 -->
+                                            </button>
+                                            <input type="file" id="image-input" accept="image/*" style="display: none;">
+                                            <!-- 메시지 입력창 -->
+                                            <input type="text" id="user-input" placeholder="메시지 TrandNV"
+                                                class="flex-grow bg-transparent border-0 px-4 py-2 text-gray-700 focus:outline-none" />
+
+                                            <!-- 전송 버튼 -->
+                                            <button id="send-button"
+                                                class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 hover:text-black focus:outline-none">
+                                                <!-- 전송 아이콘 -->
+                                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg" class="icon-2xl">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M15.1918 8.90615C15.6381 8.45983 16.3618 8.45983 16.8081 8.90615L21.9509 14.049C22.3972 14.4953 22.3972 15.2189 21.9509 15.6652C21.5046 16.1116 20.781 16.1116 20.3347 15.6652L17.1428 12.4734V22.2857C17.1428 22.9169 16.6311 23.4286 15.9999 23.4286C15.3688 23.4286 14.8571 22.9169 14.8571 22.2857V12.4734L11.6652 15.6652C11.2189 16.1116 10.4953 16.1116 10.049 15.6652C9.60265 15.2189 9.60265 14.4953 10.049 14.049L15.1918 8.90615Z"
+                                                        fill="currentColor"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </form>
-            </div>
-            <!-- footer 안내 문구 -->
-            <div
-                class="relative w-full px-2 py-2 text-center text-xs text-token-text-secondary empty:hidden md:px-[60px] bg-white">
-                <div class="min-h-4">
-                    <div>TrandNV는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</div>
+
+                    <!-- footer 안내 문구 -->
+                    <div
+                        class="relative w-full px-2 py-2 text-center text-xs text-token-text-secondary empty:hidden md:px-[60px]">
+                        <div class="min-h-4">
+                            <div>TrandNV는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -258,33 +268,16 @@
 
     </div>
     </div>
-    <script>
-        const text = "무엇을 찾고계신가요?";
-        const typingTarget = document.getElementById('typingTarget');
 
-        let index = 0;
-
-        function typeChar() {
-            if (index < text.length) {
-                typingTarget.textContent += text.charAt(index);
-                index++;
-                setTimeout(typeChar, 100); // 타이핑 속도 조정(100ms 간격)
-            }
-        }
-
-        // 페이지 로드 후 타이핑 시작
-        window.onload = function () {
-            typeChar();
-        };
-    </script>
 
     <!-- Jquery connection -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <!-- script connection -->
+    <script src="{{ url_for('static', filename='js/chatRoom.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/start.js') }}"></script>
 </body>
 
 </html>

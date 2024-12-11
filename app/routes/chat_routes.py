@@ -1,8 +1,8 @@
 # app/routes/chat_routes.py
-from flask import Blueprint, jsonify, request, Response
+from flask import Blueprint, jsonify, request, Response, render_template
 from datetime import datetime
 
-
+from app.db.redis_client import redis_message
 from app.db.redis_client import get_redis_message
 from app.db.redis_client import get_recent_history 
 from app.db.task import sync_chat_messages
@@ -160,7 +160,12 @@ def chat():
                 full_response += chunk.content
                 yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
 
-        
+        user_message_data = {
+            "room_id": room_id,
+            "user_id": user_id,
+            "content": user_message,
+            "timestamp": datetime.now().isoformat()
+        }
         # Redis에 메시지 저장 (이전에는 redis_memory.save_context 사용)
         message_data = {
             "room_id": room_id,
@@ -169,9 +174,11 @@ def chat():
             "timestamp": datetime.now().isoformat()
         }
         redis_key = f"chat:room:{room_id}:messages"
+        redis_conn.rpush(redis_key, json.dumps(user_message_data, ensure_ascii=False))  
         redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+        
         print("[DEBUG] Redis에 응답 저장 완료")
-        sync_chat_messages.delay(room_id)
+        # sync_chat_messages.delay(room_id)
 
 
     return Response(generate_response(), content_type='text/event-stream')
@@ -248,7 +255,7 @@ def add_message_to_room(room_id):
 @chat_bp.route('/chat/<int:room_id>/history', methods=['GET'])
 @jwt_required()
 def get_chat_history(room_id):
-    from app.db.redis_client import redis_message as redis_client  # Redis 클라이언트 가져오기
+    # Redis 클라이언트 가져오기
 
     verify_jwt_in_request()
 
@@ -259,7 +266,7 @@ def get_chat_history(room_id):
 
     # Redis에서 메시지 가져오기
     try:
-        raw_messages = redis_client.lrange(redis_key, 0, -1)  # 리스트의 모든 항목 가져오기
+        raw_messages = redis_message.lrange(redis_key, 0, -1)  # 리스트의 모든 항목 가져오기
         if not raw_messages:
             return jsonify({"error": "No messages found in Redis"}), 404
 
@@ -317,3 +324,12 @@ def delete_chat_room(room_id):
     session.close()
 
     return jsonify({"message": "Chat room deleted successfully"}), 200
+
+
+@chat_bp.route("/main/id:<chat_room_id>")
+def chat_room(chat_room_id):
+    # Redis에서 채팅 데이터 가져오기
+    chat_data = redis_message.lrange(f"chat:room:{chat_room_id}:messages", 0, -1)  # Redis 리스트의 모든 데이터 가져오기
+    
+    messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
+    return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)

@@ -10,10 +10,6 @@ function getCurrentUserId() {
 
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
-    const initialMessage =
-        "안녕하세요 쇼핑몰 비서 AI서비스 트렌드 네비게이터 입니다.";
-    addBotMessage(initialMessage);
-
     // 파일 선택 버튼 클릭 시 파일 선택 창 열기
     $("#upload-btn").click(function () {
         $("#image-input").click(); // 파일 선택 창을 열기
@@ -348,8 +344,8 @@ function loadChatRooms() {
             rooms.forEach((room) => {
                 // 원래 형식에 맞게 변환필요
                 chatRoomsContainer.append(`
-                    <div class="chat-room-item flex justify-between items-center p-2 hover:bg-gray-600 rounded-lg">
-                        <span class="text-sm text-ellipsis overflow-hidden whitespace-nowrap max-w-[70%]">
+                    <div class="chat-room-item flex justify-between items-center p-2 hover:bg-gray-600 rounded-lg" data-room-id="${room.room_id}" data-room-name="${room.room_name}>
+                        <span class="text-sm text-ellipsis overflow-hidden whitespace-nowrap">
                             ${room.room_name}
                         </span>
                         <button class="delete-room-btn bg-red-500 text-white rounded px-2 py-1 text-xs" data-room-id="${room.room_id}">
@@ -362,7 +358,7 @@ function loadChatRooms() {
             // 채팅방 클릭 이벤트 추가
             $(".chat-room-item").click(function () {
                 const roomId = $(this).data("room-id");
-                loadChatHistory(roomId);
+                window.location.href = `/main/id:${roomId}`;
             });
 
             // 삭제 버튼 클릭 이벤트 추가
