@@ -83,8 +83,9 @@ def get_cart():
             "product_detail": item.product_detail,
             "product_img": item.product_img,
             "price": float(item.price),
+            "product_url": item.product_url,  # URL 필드 추가
             "add_at": item.add_at
         }
         for item in cart_items
     ]
-    return jsonify(cart_items_list), 200 #
+    return jsonify(cart_items_list), 200

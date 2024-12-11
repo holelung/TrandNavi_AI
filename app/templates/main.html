@@ -40,7 +40,7 @@
                         </svg>
                     </button>
                     <!-- 새 채팅 버튼 -->
-                    <button aria-label="새 채팅" data-testid="create-new-chat-button"
+                    <button id="create-room-button" aria-label="새 채팅" data-testid="create-new-chat-button"
                         class="h-10 rounded-lg px-2 hover:bg-gray-600"><svg width="24" height="24" viewBox="0 0 24 24"
                             fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon-xl-heavy">
                             <path
@@ -224,16 +224,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 로그인 버튼 추가 -->
-                    <!-- <button
-                        class="h-10 px-4 py-2 rounded-full btn relative btn-secondary hover:bg-gray-600 border border-gray-500 text-sm"
-                        onclick="window.location.href='/login'">
-                        <div class="flex w-full items-center justify-center gap-1.5">
-                            <i class="fas fa-sign-in-alt"></i>
-                            로그인
-                        </div>
-                    </button> -->
-
                 </div>
             </div>
 
@@ -324,16 +314,6 @@
 
     </div>
     </div>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // auth.js에 정의된 checkLoginStatus 호출
-            if (typeof checkLoginStatus === "function") {
-                checkLoginStatus();
-            } else {
-                console.error("checkLoginStatus 함수가 정의되지 않았습니다.");
-            }
-        });
-    </script>
 
     <!-- Jquery connection -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
@@ -342,6 +322,7 @@
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>

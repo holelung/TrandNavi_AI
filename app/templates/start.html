@@ -5,29 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="index, follow">
-    <title>Trand NV</title>
+    <title>Trend NV</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_cart.css') }}" />
-    <link rel="icon" href="{{ url_for('static', filename='images/trandNavi-logo.png') }}" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='images/trendNavi-logo.png') }}" type="image/x-icon" />
     <!-- marked.js CDN 추가 -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- DOMPurify.js CDN 추가 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script>
-        const chatBotLogoUrl = "{{ url_for('static', filename='images/trandNavi-logo.png') }}"
+        const chatBotLogoUrl = "{{ url_for('static', filename='images/trendNavi-logo.png') }}"
     </script>
+    <style>
+        .intro-container {
+            font-size: 32px;
+            /* 48pt 정도의 사이즈 (1pt ≈ 1.333px, 48pt ≈ 64px) */
+            font-family: sans-serif;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 4px solid #333;
+            font-weight: bold;
+            /* 커서처럼 보이게 하는 오른쪽 border */
+            animation: blink 0.75s steps(1) infinite alternate;
+        }
+
+        /* 커서 깜박임 애니메이션 */
+        @keyframes blink {
+            0% {
+                border-color: transparent;
+            }
+
+            100% {
+                border-color: #333;
+            }
+        }
+    </style>
 </head>
 
 <body class="h-screen bg-gray-100">
     <!-- 화면 전체 -->
     <div class="flex h-full">
         <!-- Left Sidebar -->
-        <!-- Left Sidebar -->
-        <div id="sidebar" class="w-1/4 bg-gray-800 text-white p-4 relative">
+        <div id="sidebar" class="w-1/4 bg-gray-800 text-white p-4 hidden">
             <nav aria-label="채팅기록" class="flex flex-col h-full">
                 <!-- New Chat and Close Sidebar buttons at the top -->
                 <div class="flex justify-between mb-6 mt-1">
@@ -50,7 +73,7 @@
                         </svg>
                     </button>
                 </div>
-                <div class="flex flex-col">
+                <div class="flex-grow">
                     <h4 class="text-xl font-semibold mb-4">Chat History</h4>
                     <!-- Chat history list here -->
                     <div class="space-y-2">
@@ -86,7 +109,7 @@
                                 <div class="no-draggable group relative rounded-lg active:opactiy-90 hover:bg-gray-600">
                                     <a class="flex items-center gap-2 p-2 text-white" data-discover="true" href="#">
                                         <div class="relative grow overflow-hidden whitespace-nowrap" dir="auto">
-                                            가나다라마바사 아자차카타파하 기니디리미비시.
+                                            가나다라마바사 아자차카타파하
                                             <div
                                                 class="absolute bottom-0 top-0 to-transparent ltr:right-0 ltr:bg-gradient-to-l rtl:left-0 rtl:bg-gradient-to-r w-10 from-60%">
                                             </div>
@@ -111,9 +134,9 @@
                             </li>
                         </ol>
                     </div>
-                    <div class="flex justify-end mt-4">
+                    <div class="flex justify-end mt-auto">
                         <button onclick="click_cart()"
-                            class="absolute bottom-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            class="bottom-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                             장바구니
                         </button>
 
@@ -225,105 +248,95 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 로그인 버튼 추가 -->
-                    <!-- <button
-                                class="h-10 px-4 py-2 rounded-full btn relative btn-secondary hover:bg-gray-600 border border-gray-500 text-sm"
-                                onclick="window.location.href='/login'">
-                                <div class="flex w-full items-center justify-center gap-1.5">
-                                    <i class="fas fa-sign-in-alt"></i>
-                                    로그인
-                                </div>
-                            </button> -->
-
                 </div>
             </div>
 
-            <!-- 장바구니 섹션 -->
-            <div class="flex justify-center items-center" style="height: calc(100vh - 80px);">
-                <div class="w-full max-w-7xl bg-white rounded-lg shadow-lg p-8" style="height: 100%;">
-                    <h2 class="text-3xl font-semibold mb-6 text-gray-700">장바구니</h2>
-                    <div class="overflow-y-auto cart-table-container" style="max-height: calc(100vh - 200px);">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <!-- 테이블 헤더 -->
-                            <thead>
-                                <tr class="bg-gray-200">
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        상품 정보</th>
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        가격</th>
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        상세설명</th>
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-r border-gray-300">
-                                        추가날짜</th>
-                                    <th class="py-3 px-6 text-left text-gray-700 font-medium border-gray-300">옵션</th>
-                                </tr>
-                            </thead>
-                            <!-- 테이블 바디 -->
-                            <tbody id="cart-items">
-                                <!-- 5 Sample Cart Item Rows -->
-                                <!-- 상품 1 -->
-                                <tr class="border border-gray-300">
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/100" alt="Product Image"
-                                                class="w-16 h-16 rounded-md mr-4">
-                                            <div>
-                                                <h3 class="text-lg font-medium text-gray-700">상품 이름 1</h3>
-                                                <p class="text-gray-500">상품 설명</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 border-b text-lg font-semibold text-gray-700">₩ 100,000</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">가전</td>
-                                    <td class="py-4 px-6 border-b text-gray-700">브랜드 A</td>
-                                    <td class="py-4 px-6 border-b">
-                                        <div class="flex flex-col space-y-2">
-                                            <button class="px-2 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                style="max-width: 100px;">바로 구매</button>
-                                            <button class="px-2 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                                                style="max-width: 100px;">삭제</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+            <!-- 메인 화면 (채팅 스타트) -->
+            <div class="flex-1 w-full bg-white items-center flex justify-center flex-col">
+                <div class="flex justify-center p-3 mb-2">
+                    <div class="intro-container" id="typingTarget"></div>
+                </div>
+                <!-- INPUT 창 -->
+                <form class="w-full max-w-xl" type="button" aria-haspopup="dialog" aria-expanded="false"
+                    aria-controls="radix-:R6j4pai4lj5:" data-state="closed">
+                    <div class="relative flex flex-col">
+                        <div class="group relative flex w-full items-center justify-center">
+                            <!-- 실질적인 동작 코드 -->
+                            <div class="flex items-center w-full p-3 rounded-full bg-gray-100 shadow-sm">
+                                <!-- 첨부 파일 버튼 -->
+                                <button id="upload-btn" type="button"
+                                    class="flex items-center justify-center h-10 w-10 rounded-full text-gray-500 hover:text-black focus:outline-none">
+                                    <!-- 첨부 파일 아이콘 -->
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M9 7C9 4.23858 11.2386 2 14 2C16.7614 2 19 4.23858 19 7V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9C5 8.44772 5.44772 8 6 8C6.55228 8 7 8.44772 7 9V15C7 17.7614 9.23858 20 12 20C14.7614 20 17 17.7614 17 15V7C17 5.34315 15.6569 4 14 4C12.3431 4 11 5.34315 11 7V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V9C13 8.44772 13.4477 8 14 8C14.5523 8 15 8.44772 15 9V15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15V7Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                    <!-- 첨부 파일 아이콘 -->
+                                </button>
+                                <input type="file" id="start-image-input" accept="image/*" style="display: none;">
+                                <!-- 메시지 입력창 -->
+                                <input type="text" id="start-user-input" placeholder="메시지 TrandNV"
+                                    class="flex-grow bg-transparent border-0 px-4 py-2 text-gray-700 focus:outline-none" />
+
+                                <!-- 전송 버튼 -->
+                                <button id="start-send-button"
+                                    class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 hover:text-black focus:outline-none">
+                                    <!-- 전송 아이콘 -->
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="icon-2xl">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M15.1918 8.90615C15.6381 8.45983 16.3618 8.45983 16.8081 8.90615L21.9509 14.049C22.3972 14.4953 22.3972 15.2189 21.9509 15.6652C21.5046 16.1116 20.781 16.1116 20.3347 15.6652L17.1428 12.4734V22.2857C17.1428 22.9169 16.6311 23.4286 15.9999 23.4286C15.3688 23.4286 14.8571 22.9169 14.8571 22.2857V12.4734L11.6652 15.6652C11.2189 16.1116 10.4953 16.1116 10.049 15.6652C9.60265 15.2189 9.60265 14.4953 10.049 14.049L15.1918 8.90615Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                </form>
+            </div>
+            <!-- footer 안내 문구 -->
+            <div
+                class="relative w-full px-2 py-2 text-center text-xs text-token-text-secondary empty:hidden md:px-[60px] bg-white">
+                <div class="min-h-4">
+                    <div>TrandNV는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</div>
                 </div>
             </div>
         </div>
+
+
+
     </div>
-    <!-- Custom JS -->
+    </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // auth.js에 정의된 checkLoginStatus 호출
-            if (typeof checkLoginStatus === "function") {
-                checkLoginStatus();
-                loadCartItems();
-            } else {
-                console.error("checkLoginStatus 함수가 정의되지 않았습니다.");
+        const text = "무엇을 찾고계신가요?";
+        const typingTarget = document.getElementById('typingTarget');
+
+        let index = 0;
+
+        function typeChar() {
+            if (index < text.length) {
+                typingTarget.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeChar, 100); // 타이핑 속도 조정(100ms 간격)
             }
-        });
+        }
+
+        // 페이지 로드 후 타이핑 시작
+        window.onload = function () {
+            typeChar();
+        };
     </script>
+
+    <!-- Jquery connection -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <!-- script connection -->
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    <script>
-        function increaseQuantity(button) {
-            let input = button.previousElementSibling;
-            let currentValue = parseInt(input.value);
-            if (currentValue < 99) {
-                input.value = currentValue + 1;
-            }
-        }
-        function decreaseQuantity(button) {
-            let input = button.nextElementSibling;
-            let currentValue = parseInt(input.value);
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/start.js') }}"></script>
 </body>
 
 </html>

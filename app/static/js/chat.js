@@ -1,14 +1,12 @@
 console.log("chat.js connection");
 
-let accessToken = localStorage.getItem("access_token");
-let refreshToken = localStorage.getItem("refresh_token");
-
-// 채팅창 챗봇 로고
-const chatbotLogoUrl = $("#chat-messages").data("chatbot-logo");
-
-marked.setOptions({
-    breaks: true, // 줄바꿈을 <br>로 변환하도록 설정
-});
+// 유저 ID 호출 함수
+function getCurrentUserId() {
+    const payload = JSON.parse(
+        atob(localStorage.getItem("access_token").split(".")[1])
+    );
+    return payload.sub; // JWT payload에서 사용자 ID(sub)를 가져옴
+}
 
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
@@ -29,13 +27,12 @@ $(document).ready(function () {
 
 // bot chat 생성
 function addBotMessage(message) {
-    // const markedMessage = marked.parse(message);
     const sanitizedMessage = DOMPurify.sanitize(message);
 
     // LLM 응답을 그대로 출력
     $("#chat-messages").append(
         `<div class="flex items-start mb-4">
-            <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
+            <img src="${chatBotLogoUrl}" alt="Chatbot-Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content">
                 ${sanitizedMessage}
             </div>
@@ -64,7 +61,7 @@ function sendMessage() {
 
     var botMessageContainer = $(
         `<div class="flex items-start mb-4">
-            <img src="${chatbotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
+            <img src="${chatBotLogoUrl}" alt="Chatbot Logo" class="mr-2 w-12 h-12 rounded-full">
             <div class="bg-gray-100 p-4 rounded-lg bot-message-content"></div>
         </div>`
     );
@@ -206,7 +203,6 @@ function uploadImage() {
                 lines.forEach((line) => {
                     if (line.startsWith("data: ")) {
                         const data = JSON.parse(line.slice(6));
-                        // const markedResponse = marked.parse(data.response);
                         const sanitizedResponse = DOMPurify.sanitize(
                             data.response
                         );
@@ -298,6 +294,143 @@ function addToCart(productName, price, productImg, brand, productUrl) {
         .catch((error) => {
             console.error("Error adding to cart:", error);
             alert("Failed to add item to cart.");
+        });
+}
+
+// 채팅방 생성 버튼 클릭 이벤트
+$("#create-room-button").click(function () {
+    //
+    const roomName = prompt("채팅방 이름을 입력하세요:");
+    if (roomName) {
+        createChatRoom(roomName);
+    }
+});
+
+// 채팅방 생성 함수
+function createChatRoom(roomName) {
+    fetch("/chat/createRoom", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({ room_name: roomName }),
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.room_id) {
+                alert(`채팅방 '${data.room_name}'이(가) 생성되었습니다.`);
+                loadChatRooms(); // 새로고침
+            } else {
+                alert("채팅방 생성에 실패했습니다.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error creating chat room:", error);
+            alert("채팅방 생성 중 오류가 발생했습니다.");
+        });
+}
+
+// 채팅방 목록 로드
+function loadChatRooms() {
+    fetch("/chat/rooms", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((rooms) => {
+            const chatRoomsContainer = $("#chat-rooms");
+            chatRoomsContainer.empty();
+
+            rooms.forEach((room) => {
+                // 원래 형식에 맞게 변환필요
+                chatRoomsContainer.append(`
+                    <div class="chat-room-item" data-room-id="${room.room_id}">
+                        <span>${room.room_name}</span>
+                        <button class="delete-room-btn" data-room-id="${room.room_id}">삭제</button>
+                    </div>
+                `);
+            });
+
+            // 채팅방 클릭 이벤트 추가
+            $(".chat-room-item").click(function () {
+                const roomId = $(this).data("room-id");
+                loadChatHistory(roomId);
+            });
+
+            // 삭제 버튼 클릭 이벤트 추가
+            $(".delete-room-btn").click(function (e) {
+                e.stopPropagation();
+                const roomId = $(this).data("room-id");
+                deleteChatRoom(roomId);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading chat rooms:", error);
+            alert("채팅방 목록 로드 중 오류가 발생했습니다.");
+        });
+}
+
+// 채팅방 삭제
+function deleteChatRoom(roomId) {
+    if (!confirm("정말 이 채팅방을 삭제하시겠습니까?")) return;
+
+    fetch(`/chat/${roomId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            alert(data.message || "채팅방이 삭제되었습니다.");
+            loadChatRooms(); // 채팅방 목록 갱신
+        })
+        .catch((error) => {
+            console.error("Error deleting chat room:", error);
+            alert("채팅방 삭제 중 오류가 발생했습니다.");
+        });
+}
+
+// 채팅 기록 불러오기
+function loadChatHistory(roomId) {
+    fetch(`/chat/${roomId}/history`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((messages) => {
+            const chatMessagesContainer = $("#chat-messages");
+            chatMessagesContainer.empty();
+
+            messages.forEach((msg) => {
+                const messageHtml = `
+                    <div class="${
+                        msg.user_id === getCurrentUserId()
+                            ? "flex justify-end mb-4"
+                            : "flex items-start mb-4"
+                    }">
+                        <div class="${
+                            msg.user_id === getCurrentUserId()
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-100"
+                        } p-4 rounded-lg">
+                            ${msg.content}
+                        </div>
+                    </div>
+                `;
+                chatMessagesContainer.append(messageHtml);
+            });
+
+            chatMessagesContainer.scrollTop(
+                chatMessagesContainer[0].scrollHeight
+            );
+        })
+        .catch((error) => {
+            console.error("Error loading chat history:", error);
+            alert("채팅 기록 로드 중 오류가 발생했습니다.");
         });
 }
 
