@@ -1,5 +1,5 @@
 # app/routes/chat_routes.py
-from flask import Blueprint, jsonify, request, Response, render_template, redirect, url_for, current_app
+from flask import Blueprint, jsonify, request, Response, render_template
 from datetime import datetime
 
 from app.db.redis_client import redis_message
@@ -36,8 +36,8 @@ def chat():
     verify_jwt_in_request()
     
     user_id = get_jwt_identity()    
+    print(user_id)
     session_id = str(user_id)
-    
     redis_conn = get_redis_message()
 
     # 유저가 입력한 메시지
@@ -205,8 +205,6 @@ def create_chat_room():
     room_id = new_chat_room.room_id
     session.close()
     
-    
-    print(f"[DEBUG] 응답 데이터: room_id={room_id}, room_name={room_name}")
     return jsonify({"message": "Chat room created", "room_id": room_id, "room_name": room_name}), 201
 
 
@@ -247,6 +245,9 @@ def add_message_to_room(room_id):
     redis_key = f"chat:room:{room_id}:messages"
     redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
 
+    # 백그라운드로 동기화 태스크 전달
+    # Celery를 이용한다면 다음과 같이 태스크 호출
+    sync_chat_messages.delay(room_id)
 
     return jsonify({"message": "Message queued for syncing", "room_id": room_id}), 201
 
@@ -328,71 +329,7 @@ def delete_chat_room(room_id):
 @chat_bp.route("/main/id:<chat_room_id>")
 def chat_room(chat_room_id):
     # Redis에서 채팅 데이터 가져오기
-    redis_key = f"chat:room:{chat_room_id}:messages"
-    chat_data = redis_message.lrange(redis_key, 0, -1)  # Redis 리스트의 모든 데이터 가져오기
-
-    # 초기 데이터를 기반으로 test_client 호출
-    if len(chat_data) < 2:
-        # 초기 데이터 준비
-        chat_message = {
-            "message": "초기 메시지",
-            "room_id": chat_room_id
-        }
-        # Redis에 저장된 데이터를 참조하여 초기 메시지 설정
-        if chat_data:
-            last_message = json.loads(chat_data[-1])  # 가장 최근 메시지 가져오기
-            chat_message["message"] = f"{last_message.get('content')}"
-        
-        with current_app.test_request_context(
-            path="/chat/createMessage",
-            method="POST",
-            json=chat_message,
-            headers={"Authorization": f"Bearer {get_jwt_identity()}"}
-        ):
-            response = chat()  # chat 엔드포인트 호출
-            print(f"[DEBUG] chat 호출 결과: {response}")
-
-
-    # Redis에서 데이터를 다시 로드
-    chat_data = redis_message.lrange(redis_key, 0, -1)
-    messages = [json.loads(msg) for msg in chat_data]
-
-    return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
-
-
-@chat_bp.route("/main/id:<room_id>", methods=['POST'])
-@jwt_required()
-def start_chat(room_id):
-    user_id = get_jwt_identity()
-    session_id = str(user_id)
+    chat_data = redis_message.lrange(f"chat:room:{chat_room_id}:messages", 0, -1)  # Redis 리스트의 모든 데이터 가져오기
     
-    # 클라이언트에서 전달된 데이터
-    # room_name 이자 user_message이다
-    user_message = request.json.get('room_name')
-
-    # Redis 초기화 및 메시지 저장
-    redis_conn = get_redis_message()
-    redis_key = f"chat:room:{room_id}:messages"
-
-    # 사용자 메시지 저장
-    user_message_data = {
-        "room_id": room_id,
-        "user_id": user_id,
-        "content": user_message,
-        "timestamp": datetime.now().isoformat(),
-    }
-    redis_conn.rpush(redis_key, json.dumps(user_message_data))
-
-    # LLM 메시지 생성 및 저장
-    llm_response = f"LLM 응답: {user_message}와 관련된 내용을 분석 중입니다."
-    bot_message_data = {
-        "room_id": room_id,
-        "user_id": "BotMessage",
-        "content": llm_response,
-        "timestamp": datetime.now().isoformat(),
-    }
-    redis_conn.rpush(redis_key, json.dumps(bot_message_data))
-
-    print("[DEBUG] /main/id:<room_id> 라우트 호출")
-    # 채팅방 HTML 렌더링
-    return redirect(url_for('chat_bp.chat_room', room_id=room_id))
+    messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
+    return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
