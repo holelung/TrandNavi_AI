@@ -1,5 +1,5 @@
 # app/routes/chat_routes.py
-from flask import Blueprint, jsonify, request, Response, render_template
+from flask import Blueprint, jsonify, request, Response, render_template, redirect, url_for
 from datetime import datetime
 
 from app.db.redis_client import redis_message
@@ -36,8 +36,8 @@ def chat():
     verify_jwt_in_request()
     
     user_id = get_jwt_identity()    
-    print(user_id)
     session_id = str(user_id)
+    
     redis_conn = get_redis_message()
 
     # 유저가 입력한 메시지
@@ -205,6 +205,8 @@ def create_chat_room():
     room_id = new_chat_room.room_id
     session.close()
     
+    
+    print(f"[DEBUG] 응답 데이터: room_id={room_id}, room_name={room_name}")
     return jsonify({"message": "Chat room created", "room_id": room_id, "room_name": room_name}), 201
 
 
@@ -245,9 +247,6 @@ def add_message_to_room(room_id):
     redis_key = f"chat:room:{room_id}:messages"
     redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
 
-    # 백그라운드로 동기화 태스크 전달
-    # Celery를 이용한다면 다음과 같이 태스크 호출
-    sync_chat_messages.delay(room_id)
 
     return jsonify({"message": "Message queued for syncing", "room_id": room_id}), 201
 
@@ -333,3 +332,40 @@ def chat_room(chat_room_id):
     
     messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
     return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
+
+@chat_bp.route("/main/id:<room_id>", methods=['POST'])
+@jwt_required()
+def start_chat(room_id):
+    user_id = get_jwt_identity()
+    session_id = str(user_id)
+    
+    # 클라이언트에서 전달된 데이터
+    # room_name 이자 user_message이다
+    user_message = request.json.get('room_name')
+
+    # Redis 초기화 및 메시지 저장
+    redis_conn = get_redis_message()
+    redis_key = f"chat:room:{room_id}:messages"
+
+    # 사용자 메시지 저장
+    user_message_data = {
+        "room_id": room_id,
+        "user_id": user_id,
+        "content": user_message,
+        "timestamp": datetime.now().isoformat(),
+    }
+    redis_conn.rpush(redis_key, json.dumps(user_message_data))
+
+    # LLM 메시지 생성 및 저장
+    llm_response = f"LLM 응답: {user_message}와 관련된 내용을 분석 중입니다."
+    bot_message_data = {
+        "room_id": room_id,
+        "user_id": "BotMessage",
+        "content": llm_response,
+        "timestamp": datetime.now().isoformat(),
+    }
+    redis_conn.rpush(redis_key, json.dumps(bot_message_data))
+
+    print("[DEBUG] /main/id:<room_id> 라우트 호출")
+    # 채팅방 HTML 렌더링
+    return redirect(url_for('chat_bp.chat_room', room_id=room_id))
