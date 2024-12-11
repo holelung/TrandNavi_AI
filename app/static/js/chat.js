@@ -48,6 +48,7 @@ function sendMessage() {
     var userMessage = $("#user-input").val();
     if (userMessage.trim() === "") return;
     const token = localStorage.getItem("access_token");
+    const room_id = localStorage.getItem("room_id");
 
     $("#chat-messages").append(
         `<div class="flex justify-end mb-4">
@@ -73,7 +74,7 @@ function sendMessage() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({ message: userMessage, room_id: room_id }),
     }).then((response) => {
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -298,6 +299,7 @@ function addToCart(productName, price, productImg, brand, productUrl) {
 }
 
 // 채팅방 생성 버튼 클릭 이벤트
+// 클릭시 start로
 $("#create-room-button").click(function () {
     //
     const roomName = prompt("채팅방 이름을 입력하세요:");
@@ -346,9 +348,13 @@ function loadChatRooms() {
             rooms.forEach((room) => {
                 // 원래 형식에 맞게 변환필요
                 chatRoomsContainer.append(`
-                    <div class="chat-room-item" data-room-id="${room.room_id}">
-                        <span>${room.room_name}</span>
-                        <button class="delete-room-btn" data-room-id="${room.room_id}">삭제</button>
+                    <div class="chat-room-item flex justify-between items-center p-2 hover:bg-gray-600 rounded-lg">
+                        <span class="text-sm text-ellipsis overflow-hidden whitespace-nowrap max-w-[70%]">
+                            ${room.room_name}
+                        </span>
+                        <button class="delete-room-btn bg-red-500 text-white rounded px-2 py-1 text-xs" data-room-id="${room.room_id}">
+                            삭제
+                        </button>
                     </div>
                 `);
             });
@@ -385,7 +391,7 @@ function deleteChatRoom(roomId) {
         .then((response) => response.json())
         .then((data) => {
             alert(data.message || "채팅방이 삭제되었습니다.");
-            loadChatRooms(); // 채팅방 목록 갱신
+            loadChatRoomsOnLoad(); // 채팅방 목록 갱신
         })
         .catch((error) => {
             console.error("Error deleting chat room:", error);

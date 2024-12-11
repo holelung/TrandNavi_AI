@@ -12,30 +12,44 @@ function loadRecentChatHistory() {
     // 최근 채팅방 ID를 설정 (예: 기본값 또는 로컬스토리지에서 로드)
     const recentRoomId = localStorage.getItem("room_id"); // 기본 채팅방 ID (적절히 수정)
 
+    console.log(recentRoomId);
     // Fetch API를 사용하여 채팅 기록 가져오기
     fetch(`/chat/${recentRoomId}/history`, {
         method: "GET",
         headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`, // JWT 토큰 사용
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
     })
         .then((response) => {
+            console.log("응답 상태 코드:", response.status);
             if (!response.ok) {
-                throw new Error("Failed to fetch chat history");
+                throw new Error(`서버 오류: ${response.status}`);
             }
             return response.json();
         })
-        .then((data) => {
-            renderChatHistory(data);
+        .then((msg) => {
+            console.log("서버에서 받은 데이터:", msg);
+            renderChatHistory(msg);
         })
         .catch((error) => {
             console.error("Error fetching chat history:", error);
         });
 }
 
+// 채팅 렌더링
 function renderChatHistory(messages) {
     const chatMessagesContainer = document.getElementById("chat-messages");
 
+    console.log("랜더링");
+    console.log(messages);
+    // chatMessagesContainer가 null인지 확인
+    if (!chatMessagesContainer) {
+        console.error(
+            "Chat messages container not found. Ensure the ID 'chat-messages' exists in the HTML."
+        );
+        return;
+    }
+    // 채팅렌더링 원래 형식 맞춰서
     messages.forEach((message) => {
         const messageElement = document.createElement("div");
         messageElement.classList.add("mb-4");
@@ -65,7 +79,7 @@ function renderChatHistory(messages) {
     });
 
     // 스크롤을 가장 아래로 이동
-    chatMessagesContainer.scrollTop = chatMessagesContainer[0].scrollHeight;
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; // [0] 제거
 }
 
 function loadChatRoomsOnLoad() {
@@ -82,9 +96,13 @@ function loadChatRoomsOnLoad() {
             rooms.forEach((room) => {
                 // 원래 형식에 맞게 변환필요
                 chatRoomsContainer.append(`
-                    <div class="chat-room-item" data-room-id="${room.room_id}">
-                        <span>${room.room_name}</span>
-                        <button class="delete-room-btn" data-room-id="${room.room_id}">삭제</button>
+                    <div class="chat-room-item flex justify-between items-center p-2 hover:bg-gray-600 rounded-lg">
+                        <span class="text-sm text-ellipsis overflow-hidden whitespace-nowrap">
+                            ${room.room_name}
+                        </span>
+                        <button class="delete-room-btn bg-red-500 text-white rounded px-2 py-1 text-xs" data-room-id="${room.room_id}">
+                            삭제
+                        </button>
                     </div>
                 `);
             });

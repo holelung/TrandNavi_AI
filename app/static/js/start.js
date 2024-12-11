@@ -1,4 +1,8 @@
 // app/static/js/start.js
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("채팅방 로드");
+    loadChatRoomsOnLoad();
+});
 
 $(document).ready(function () {
     $("#start-send-button").click(function (e) {
@@ -28,7 +32,7 @@ function createChatRoom(roomName) {
             if (data.room_id) {
                 console.log(`채팅방 '${data.room_name}'이(가) 생성되었습니다.`);
                 // 방 아이디를 localStorage에 저장
-                // localStorage.setItem("current_room_id", data.room_id);
+                localStorage.setItem("room_id", data.room_id);
                 console.log("사용자 입력저장");
                 saveMessageToRoom(data.room_id, data.room_name);
                 console.log("llm 답변생성");
@@ -88,5 +92,47 @@ function saveMessageToRoom(room_id, room_name) {
         .catch((error) => {
             console.error("Error creating save message: ", error);
             alert("오류발생");
+        });
+}
+
+function loadChatRoomsOnLoad() {
+    fetch("/chat/rooms", {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+    })
+        .then((response) => response.json())
+        .then((rooms) => {
+            const chatRoomsContainer = $("#chat-rooms");
+            chatRoomsContainer.empty();
+
+            rooms.forEach((room) => {
+                // 원래 형식에 맞게 변환필요
+                chatRoomsContainer.append(`
+                    <div class="chat-room-item flex justify-between items-center p-2 rounded hover:bg-gray-600" data-room-id="${room.room_id}">
+                        <span class="text-white">${room.room_name}</span>
+                        <button class="delete-room-btn bg-red-500 text-white p-2 rounded hover:bg-red-700" data-room-id="${room.room_id}">
+                            삭제
+                        </button>
+                    </div>
+                `);
+            });
+
+            // 채팅방 클릭 이벤트 추가
+            $(".chat-room-item").click(function () {
+                const roomId = $(this).data("room-id");
+                loadChatHistory(roomId);
+            });
+
+            // 삭제 버튼 클릭 이벤트 추가
+            $(".delete-room-btn").click(function (e) {
+                e.stopPropagation();
+                const roomId = $(this).data("room-id");
+                deleteChatRoom(roomId);
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading chat rooms:", error);
+            alert("채팅방 목록 로드 중 오류가 발생했습니다.");
         });
 }
