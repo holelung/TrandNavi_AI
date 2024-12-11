@@ -333,39 +333,50 @@ def chat_room(chat_room_id):
     messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
     return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
 
-@chat_bp.route("/main/id:<room_id>", methods=['POST'])
+@chat_bp.route("/main/id/<int:room_id>", methods=['POST'])
 @jwt_required()
 def start_chat(room_id):
-    user_id = get_jwt_identity()
-    session_id = str(user_id)
-    
-    # 클라이언트에서 전달된 데이터
-    # room_name 이자 user_message이다
-    user_message = request.json.get('room_name')
+    try:
+        user_id = get_jwt_identity()
+        session_id = str(user_id)
 
-    # Redis 초기화 및 메시지 저장
-    redis_conn = get_redis_message()
-    redis_key = f"chat:room:{room_id}:messages"
+        # 클라이언트에서 전달된 데이터
+        user_message = request.json.get('room_name')
+        if not user_message:
+            return jsonify({"error": "Invalid request. 'room_name' is required."}), 400
 
-    # 사용자 메시지 저장
-    user_message_data = {
-        "room_id": room_id,
-        "user_id": user_id,
-        "content": user_message,
-        "timestamp": datetime.now().isoformat(),
-    }
-    redis_conn.rpush(redis_key, json.dumps(user_message_data))
+        # Redis 초기화 및 메시지 저장
+        redis_conn = get_redis_message()
+        redis_key = f"chat:room:{room_id}:messages"
 
-    # LLM 메시지 생성 및 저장
-    llm_response = f"LLM 응답: {user_message}와 관련된 내용을 분석 중입니다."
-    bot_message_data = {
-        "room_id": room_id,
-        "user_id": "BotMessage",
-        "content": llm_response,
-        "timestamp": datetime.now().isoformat(),
-    }
-    redis_conn.rpush(redis_key, json.dumps(bot_message_data))
+        # 사용자 메시지 저장
+        user_message_data = {
+            "room_id": room_id,
+            "user_id": user_id,
+            "content": user_message,
+            "timestamp": datetime.now().isoformat(),
+        }
+        redis_conn.rpush(redis_key, json.dumps(user_message_data))
 
-    print("[DEBUG] /main/id:<room_id> 라우트 호출")
-    # 채팅방 HTML 렌더링
-    return redirect(url_for('chat_bp.chat_room', room_id=room_id))
+        # LLM 메시지 생성 및 저장
+        llm_response = f"LLM 응답: {user_message}방에 오신걸 환영합니다!"
+        bot_message_data = {
+            "room_id": room_id,
+            "user_id": "BotMessage",
+            "content": llm_response,
+            "timestamp": datetime.now().isoformat(),
+        }
+        redis_conn.rpush(redis_key, json.dumps(bot_message_data))
+
+        # Redis에서 저장된 메시지 로드
+        messages = redis_conn.lrange(redis_key, 0, -1)
+        message_list = [json.loads(msg) for msg in messages]
+
+        print(f"[DEBUG] /main/id/<room_id> 라우트 호출 완료. 메시지 개수: {len(message_list)}")
+
+        # 채팅방 HTML 렌더링
+        return render_template("chat_room.html", room_id=room_id, messages=message_list)
+
+    except Exception as e:
+        print(f"[ERROR] /main/id/<room_id> 처리 중 오류 발생: {str(e)}")
+        return jsonify({"error": "An error occurred", "details": str(e)}), 500
