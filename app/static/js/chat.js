@@ -10,10 +10,6 @@ function getCurrentUserId() {
 
 // 페이지 로드 시 초기 메시지 추가
 $(document).ready(function () {
-    const initialMessage =
-        "안녕하세요 쇼핑몰 비서 AI서비스 트렌드 네비게이터 입니다.";
-    addBotMessage(initialMessage);
-
     // 파일 선택 버튼 클릭 시 파일 선택 창 열기
     $("#upload-btn").click(function () {
         $("#image-input").click(); // 파일 선택 창을 열기

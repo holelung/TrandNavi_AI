@@ -177,18 +177,10 @@
             </div>
 
             <!-- Chat messages area -->
-            <div class="flex-grow p-4 overflow-y-auto bg-white" id="chat-messages"
+            <div class="flex-grow p-4 overflow-y-auto bg-white"
                 data-chatbot-logo="{{ url_for('static', filename='images/trendNavi-logo.png') }}">
-                <div id="llmResponse"></div>
                 {% for message in messages %}
-                {% if message.user_id == user_id %}
-                <!-- 사용자의 메시지 -->
-                <div class="flex justify-end mb-4">
-                    <div class="bg-blue-500 text-white p-4 rounded-lg">
-                        {{ message.content }}
-                    </div>
-                </div>
-                {% else %}
+                {% if message.user_id == "BotMessage" %}
                 <!-- 챗봇의 메시지 -->
                 <div class="flex items-start mb-4">
                     <img src="{{ chatBotLogoUrl }}" alt="Chatbot-Logo" class="mr-2 w-12 h-12 rounded-full">
@@ -196,9 +188,16 @@
                         {{ message.content }}
                     </div>
                 </div>
+                {% else %}
+                <!-- 사용자의 메시지 -->
+                <div class="flex justify-end mb-4">
+                    <div class="bg-blue-500 text-white p-4 rounded-lg">
+                        {{ message.content }}
+                    </div>
+                </div>
                 {% endif %}
                 {% endfor %}
-
+                <div id="chat-messages"></div>
 
             </div>
 
@@ -270,14 +269,15 @@
     </div>
     </div>
 
+
     <!-- Jquery connection -->
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <!-- script connection -->
+    <script src="{{ url_for('static', filename='js/chatRoom.js') }}"></script>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>
