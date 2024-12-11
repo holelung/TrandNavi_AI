@@ -12,26 +12,38 @@ celery = Celery(__name__, broker='redis://localhost:6379/1', backend='redis://lo
 @celery.task
 def sync_chat_messages(room_id):
     key = f"chat:room:{room_id}:messages"
-    db = Session()  # 새로운 세션 생성
+    db = Session()
 
     try:
         while True:
             raw_msg = redis_client.lpop(key)
             if raw_msg is None:
+                print("Redis에서 가져올 메시지가 없습니다.")
                 break
-            msg_data = json.loads(raw_msg)
 
-            # Message 객체 생성 및 DB 저장
-            new_message = Message(
-                room_id=room_id,
-                user_id=msg_data["user_id"],
-                content=msg_data["content"],
-            )
-            db.add(new_message)
-        
-        db.commit()  # 세션 커밋
+            try:
+                msg_data = json.loads(raw_msg)
+                print("Redis 메시지 디코딩 성공:", msg_data)
+            except json.JSONDecodeError as e:
+                print("JSON 디코딩 실패:", e)
+                continue
+
+            try:
+                new_message = Message(
+                    room_id=room_id,
+                    user_id=msg_data["user_id"],
+                    content=msg_data["content"],
+                )
+                db.add(new_message)
+                print("DB 메시지 추가 성공:", new_message)
+            except Exception as e:
+                print("DB 메시지 추가 실패:", e)
+                continue
+
+        db.commit()
+        print("DB 커밋 성공")
     except Exception as e:
-        db.rollback()  # 에러 발생 시 롤백
-        raise e
+        db.rollback()
+        print("DB 작업 실패. 롤백 실행:", e)
     finally:
-        db.close()  # 세션 닫기
+        db.close()

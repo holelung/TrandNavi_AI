@@ -24,6 +24,7 @@ def get_redis_message():
     if redis_message is None:
         raise RuntimeError("Redis Message client is not initialized. Call init_redis() first.")
     return redis_message
+
 def get_recent_history(session_id, limit=5):
     """가장 최근의 N개의 대화 쌍을 반환"""
     history = redis_message.lrange(session_id, 0, -1)  # 전체 기록 가져오기

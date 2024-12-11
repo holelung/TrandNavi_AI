@@ -293,37 +293,11 @@
         </div>
     </div>
     <!-- Custom JS -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // auth.js에 정의된 checkLoginStatus 호출
-            if (typeof checkLoginStatus === "function") {
-                checkLoginStatus();
-                loadCartItems();
-            } else {
-                console.error("checkLoginStatus 함수가 정의되지 않았습니다.");
-            }
-        });
-    </script>
     <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
     <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
-    <script>
-        function increaseQuantity(button) {
-            let input = button.previousElementSibling;
-            let currentValue = parseInt(input.value);
-            if (currentValue < 99) {
-                input.value = currentValue + 1;
-            }
-        }
-        function decreaseQuantity(button) {
-            let input = button.nextElementSibling;
-            let currentValue = parseInt(input.value);
-            if (currentValue > 1) {
-                input.value = currentValue - 1;
-            }
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </body>
 
 </html>

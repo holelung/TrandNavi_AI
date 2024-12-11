@@ -147,7 +147,7 @@ def chat():
         print("[DEBUG] LLM 프롬프트 생성 시작")
         messages = prompt.format_messages(
             product_info=llm_config.get_product_info(),  # LLMConfig에서 product_info 가져오기
-            history="\n".join(redis_memory.get_recent_history(limit=5)),
+            history="\n".join(get_recent_history(session_id=session_id, limit=5)),
             human_input=user_message
         )
         print("[DEBUG] LLM 프롬프트 생성 완료")
@@ -248,32 +248,30 @@ def add_message_to_room(room_id):
 @chat_bp.route('/chat/<int:room_id>/history', methods=['GET'])
 @jwt_required()
 def get_chat_history(room_id):
+    from app.db.redis_client import redis_message as redis_client  # Redis 클라이언트 가져오기
+
     verify_jwt_in_request()
 
     user_id = get_jwt_identity()
-    session = Session()
+    
+    # Redis 키 설정
+    redis_key = f"chat:room:{room_id}:messages"
 
-    # 채팅방 존재 여부 확인
-    chat_room = session.query(ChatRoom).filter_by(room_id=room_id).first()
-    if not chat_room:
-        session.close()
-        return jsonify({"error": "Chat room not found"}), 404
+    # Redis에서 메시지 가져오기
+    try:
+        raw_messages = redis_client.lrange(redis_key, 0, -1)  # 리스트의 모든 항목 가져오기
+        if not raw_messages:
+            return jsonify({"error": "No messages found in Redis"}), 404
 
-    messages = session.query(Message).filter_by(room_id=room_id).order_by(Message.created_at).all()
-    session.close()
+        # JSON 형식으로 변환
+        message_list = [
+            json.loads(msg) for msg in raw_messages
+        ]
+        return jsonify(message_list), 200
 
-    # 메시지를 JSON 형태로 변환
-    message_list = [
-        {
-            "message_id": msg.message_id,
-            "user_id": msg.user_id,
-            "content": msg.content,
-            "created_at": msg.created_at.isoformat()
-        }
-        for msg in messages
-    ]
-    return jsonify(message_list), 200
-
+    except Exception as e:
+        print(f"Redis에서 메시지 로드 실패: {e}")
+        return jsonify({"error": "Failed to load messages from Redis"}), 500
 
 # 모든 채팅방 목록 불러오기
 @chat_bp.route('/chat/rooms', methods=['GET'])

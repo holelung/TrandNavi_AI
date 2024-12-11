@@ -23,10 +23,8 @@ function loadCartItems() {
                 row.classList.add("border", "border-gray-300");
 
                 // product_url 유효성 확인 및 기본값 설정
-                const productUrl = item.product_url 
-                    ? item.product_url 
-                    : "#";
-                
+                const productUrl = item.product_url ? item.product_url : "#";
+
                 if (!item.product_url) {
                     console.warn(
                         `상품 URL이 누락되었습니다. ID: ${item.id}, 상품명: ${item.product_name}`
@@ -37,10 +35,13 @@ function loadCartItems() {
                 <td class="py-4 px-6 border-b">
                     <div class="flex items-center">
                         <img src="${
-                            item.product_img || "https://via.placeholder.com/100"
+                            item.product_img ||
+                            "https://via.placeholder.com/100"
                         }" alt="Product Image" class="w-16 h-16 rounded-md mr-4">
                         <div>
-                            <h3 class="text-lg font-medium text-gray-700">${item.product_name}</h3>
+                            <h3 class="text-lg font-medium text-gray-700">${
+                                item.product_name
+                            }</h3>
                         </div>
                     </div>
                 </td>
@@ -95,4 +96,4 @@ function removeItem(itemId) {
 }
 
 // 페이지 로드 시 장바구니 아이템을 불러옵니다.
-// document.addEventListener("DOMContentLoaded", loadCartItems);
+document.addEventListener("DOMContentLoaded", loadCartItems);
