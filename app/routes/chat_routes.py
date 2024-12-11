@@ -17,7 +17,7 @@ from app.db import Session
 from app.models.chat_rooms_model import ChatRoom
 from app.models.messages_model import Message
 
-from app.llm_config import llm, prompt, trend_template, extract_keyword ,LLMConfig
+from app.llm_config import llm, prompt,price_comparison_prompt, trend_prompt, extract_keyword ,LLMConfig
 
 
 from flask_jwt_extended import jwt_required
@@ -49,79 +49,129 @@ def chat():
         return jsonify({"error": "room_id is required"}), 400
 
     def generate_response():
-        # 트렌드 관련 처리
+        
+        
         if "트렌드" in user_message or "유행" in user_message:
-            yield f"data: {json.dumps({'response': '트렌드 데이터를 가져오는 중입니다...'})}\n\n"
-            keyword = extract_keyword(user_message)
-
-            if keyword:
+            try:
+                print("[DEBUG] 트렌드 요청 처리 시작")
+                
+                # 키워드 추출
+                keyword = extract_keyword(user_message)
+                if not keyword:
+                    raise ValueError("키워드를 추출할 수 없습니다.")
+                
+                # 트렌드 데이터 가져오기
                 trend_data = get_related_topics(keyword)
+                if not trend_data:
+                    raise ValueError("트렌드 데이터를 가져오는 데 실패했습니다.")
+                
+                # 트렌드 정보 구성
+                rising_topics = "\n".join([f"{i+1}. {topic['title']} ({topic['value']})" for i, topic in enumerate(trend_data['rising'])])
+                top_topics = "\n".join([f"{i+1}. {topic['title']} ({topic['value']})" for i, topic in enumerate(trend_data['top'])])
+                trend_info = {
+                    "keyword": keyword,
+                    "rising_topics": rising_topics,
+                    "top_topics": top_topics
+                }
+                
+                # LLMConfig에 트렌드 정보 저장
+                llm_config.set_trend_info(trend_info)
+                print("[DEBUG] 트렌드 정보 저장 완료")
+                print(f"[DEBUG] 저장된 트렌드 정보: {llm_config.get_trend_info()}")
 
-                if trend_data:
-                    rising_topics = "\n".join([f"{i+1}. {topic['title']} ({topic['value']})" for i, topic in enumerate(trend_data['rising'])])
-                    top_topics = "\n".join([f"{i+1}. {topic['title']} ({topic['value']})" for i, topic in enumerate(trend_data['top'])])
-                    
-                    messages = trend_template.format(
-                        keyword=keyword,
-                        rising_topics=rising_topics,
-                        top_topics=top_topics,
-                        history="\n".join(get_recent_history(session_id=session_id, limit=5)),
-                        human_input=user_message
-                    )
+                # LLM 프롬프트 생성
+                print("[DEBUG] LLM 프롬프트 생성 시작")
+                messages = trend_prompt.format_messages(
+                    keyword=trend_info['keyword'],
+                    rising_topics=trend_info['rising_topics'],
+                    top_topics=trend_info['top_topics'],
+                    history="\n".join(get_recent_history(session_id=session_id, limit=5)),
+                    human_input=user_message
+                )
+                print("[DEBUG] LLM 프롬프트 생성 완료")
 
-                    response = ""
-                    for chunk in llm.stream(messages):
-                        if chunk.content:
-                            response += chunk.content
-                            yield f"data: {json.dumps({'response': response})}\n\n"
+                # 응답 스트리밍
+                full_response = ""
+                for chunk in llm.stream(messages):
+                    if chunk.content:
+                        full_response += chunk.content
+                        yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
 
-                    # Redis에 트렌드 요청 기록 저장 (여기서는 room_id를 모를 경우 별도의 key 저장방식을 택하거나 수정 필요)
-                    # 일단 아래와 같이 동일한 포맷으로 저장한다고 가정
-                    message_data = {
-                        "room_id": room_id,
-                        "user_id": "BotMessage",
-                        "content": response,
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    redis_key = f"chat:room:{room_id}:messages"
-                    redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+                # Redis 저장
+                message_data = {
+                    "room_id": room_id,
+                    "user_id": "BotMessage",
+                    "content": full_response,
+                    "timestamp": datetime.now().isoformat()
+                }
+                redis_key = f"chat:room:{room_id}:messages"
+                redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+                print("[DEBUG] Redis에 트렌드 응답 저장 완료")
 
-                    return
-
-                else:
-                    error_message = "트렌드 정보를 가져오는 데 실패했습니다."
-                    # Redis 저장
-                    message_data = {
-                        "room_id": room_id,
-                        "user_id": "BotMessage",
-                        "content": error_message,
-                        "timestamp": datetime.now().isoformat()
-                    }
-                    redis_key = f"chat:room:{room_id}:messages"
-                    redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
-                    yield f"data: {json.dumps({'response': error_message})}\n\n"
-                    return
+                return
+            except Exception as e:
+                error_message = f"트렌드 요청 처리 중 오류가 발생했습니다: {str(e)}"
+                print(f"[DEBUG] {error_message}")
+                # Redis 저장
+                message_data = {
+                    "room_id": room_id,
+                    "user_id": "BotMessage",
+                    "content": error_message,
+                    "timestamp": datetime.now().isoformat()
+                }
+                redis_key = f"chat:room:{room_id}:messages"
+                redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
+                yield f"data: {json.dumps({'response': error_message}, ensure_ascii=False)}\n\n"
+                return
         
         # 가격 비교 처리
-        if "가격 비교" in user_message:
+        if "가격 비교" or "가격비교" in user_message:
+            print("[DEBUG] 가격 비교 요청 처리 시작")
+            
+            # 가격 비교 정보 가져오기
             min_price, max_price = get_price_comparison(user_message)
-            price_comparison_response = f"최저가: {min_price}원, 최고가: {max_price}원"
+            price_comparison_info = {
+                "product_name": user_message,  # 사용자 요청 메시지를 상품 이름으로 간주
+                "min_price": min_price,
+                "max_price": max_price
+            }
+            
+            # LLMConfig에 가격 비교 정보 저장
+            llm_config.set_price_comparison_info(price_comparison_info)
+            print("[DEBUG] 가격 비교 정보 저장 완료")
+            print(f"[DEBUG] 저장된 가격 비교 정보: {llm_config.get_price_comparison_info()}")
+
+            # LLM 프롬프트 생성
+            print("[DEBUG] LLM 프롬프트 생성 시작")
+            messages = price_comparison_prompt.format_messages(
+                product_info=llm_config.get_product_info(),  # 기존 상품 정보
+                price_comparison_info=llm_config.get_price_comparison_info(),  # 가격 비교 정보
+                history="\n".join(get_recent_history(session_id=session_id, limit=5)),
+                human_input=user_message
+            )
+            print("[DEBUG] LLM 프롬프트 생성 완료")
+
+            # 응답 스트리밍
+            full_response = ""
+            for chunk in llm.stream(messages):
+                if chunk.content:
+                    full_response += chunk.content
+                    yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
             
             # Redis 저장
             message_data = {
                 "room_id": room_id,
                 "user_id": "BotMessage",
-                "content": price_comparison_response,
+                "content": full_response,
                 "timestamp": datetime.now().isoformat()
             }
             redis_key = f"chat:room:{room_id}:messages"
             redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
-            
-            yield f"data: {json.dumps({'response': price_comparison_response})}\n\n"
+            print("[DEBUG] Redis에 가격 비교 응답 저장 완료")
+
             return
+ 
 
-
-        
         print("[DEBUG] 네이버 쇼핑 API 호출 시작")
 
         items = get_naver_shopping_data(user_message)

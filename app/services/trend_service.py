@@ -40,18 +40,18 @@ def get_related_topics(keyword):
             rising_topics = related_topics.get("rising", [])
             top_topics = related_topics.get("top", [])
 
-            # 상위 3개 항목 선택
-            sorted_rising_topics = sorted(
-                rising_topics, 
-                key=lambda x: int(x.get("extracted_value", 0)),  # 'extracted_value'를 정수로 변환
-                reverse=True
-            )[:3]
-            
-            sorted_top_topics = sorted(
-                top_topics, 
-                key=lambda x: int(x.get("value", 0)),  # 'value'를 정수로 변환
-                reverse=True
-            )[:3]
+            # 필요한 필드만 추출 후 정렬
+            sorted_rising_topics = [
+                {"title": topic["topic"]["title"], "value": topic["value"], "link": topic["link"]}
+                for topic in rising_topics
+            ]
+            sorted_rising_topics = sorted(sorted_rising_topics, key=lambda x: int(x["value"]), reverse=True)[:3]
+
+            sorted_top_topics = [
+                {"title": topic["topic"]["title"], "value": topic["value"], "link": topic["link"]}
+                for topic in top_topics
+            ]
+            sorted_top_topics = sorted(sorted_top_topics, key=lambda x: int(x["value"]), reverse=True)[:3]
 
             # 데이터가 없을 경우 처리
             if not sorted_rising_topics and not sorted_top_topics:
