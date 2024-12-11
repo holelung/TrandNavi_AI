@@ -1,5 +1,5 @@
 # app/routes/chat_routes.py
-from flask import Blueprint, jsonify, request, Response, render_template, redirect, url_for
+from flask import Blueprint, jsonify, request, Response, render_template, redirect, url_for, current_app
 from datetime import datetime
 
 from app.db.redis_client import redis_message
@@ -328,10 +328,37 @@ def delete_chat_room(room_id):
 @chat_bp.route("/main/id:<chat_room_id>")
 def chat_room(chat_room_id):
     # Redis에서 채팅 데이터 가져오기
-    chat_data = redis_message.lrange(f"chat:room:{chat_room_id}:messages", 0, -1)  # Redis 리스트의 모든 데이터 가져오기
-    
-    messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
+    redis_key = f"chat:room:{chat_room_id}:messages"
+    chat_data = redis_message.lrange(redis_key, 0, -1)  # Redis 리스트의 모든 데이터 가져오기
+
+    # 초기 데이터를 기반으로 test_client 호출
+    if len(chat_data) < 2:
+        # 초기 데이터 준비
+        chat_message = {
+            "message": "초기 메시지",
+            "room_id": chat_room_id
+        }
+        # Redis에 저장된 데이터를 참조하여 초기 메시지 설정
+        if chat_data:
+            last_message = json.loads(chat_data[-1])  # 가장 최근 메시지 가져오기
+            chat_message["message"] = f"{last_message.get('content')}"
+        
+        with current_app.test_request_context(
+            path="/chat/createMessage",
+            method="POST",
+            json=chat_message,
+            headers={"Authorization": f"Bearer {get_jwt_identity()}"}
+        ):
+            response = chat()  # chat 엔드포인트 호출
+            print(f"[DEBUG] chat 호출 결과: {response}")
+
+
+    # Redis에서 데이터를 다시 로드
+    chat_data = redis_message.lrange(redis_key, 0, -1)
+    messages = [json.loads(msg) for msg in chat_data]
+
     return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
+
 
 @chat_bp.route("/main/id:<room_id>", methods=['POST'])
 @jwt_required()
