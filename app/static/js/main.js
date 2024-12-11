@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
     loadChatRoomsOnLoad();
 });
 
+function getCurrentUserId() {
+    const payload = JSON.parse(
+        atob(localStorage.getItem("access_token").split(".")[1])
+    );
+    return payload.sub; // JWT payload에서 사용자 ID(sub)를 가져옴
+}
+
 function loadRecentChatHistory() {
     // 최근 채팅방 ID를 설정 (예: 기본값 또는 로컬스토리지에서 로드)
     const recentRoomId = localStorage.getItem("room_id"); // 기본 채팅방 ID (적절히 수정)
@@ -96,7 +103,7 @@ function loadChatRoomsOnLoad() {
             rooms.forEach((room) => {
                 // 원래 형식에 맞게 변환필요
                 chatRoomsContainer.append(`
-                    <div class="chat-room-item flex justify-between items-center p-2 hover:bg-gray-600 rounded-lg">
+                    <div class="chat-room-item flex justify-between items-center p-2 hover:bg-gray-600 rounded-lg" data-room-id="${room.room_id}" data-room-name="${room.room_name}>
                         <span class="text-sm text-ellipsis overflow-hidden whitespace-nowrap">
                             ${room.room_name}
                         </span>
@@ -110,7 +117,7 @@ function loadChatRoomsOnLoad() {
             // 채팅방 클릭 이벤트 추가
             $(".chat-room-item").click(function () {
                 const roomId = $(this).data("room-id");
-                loadChatHistory(roomId);
+                window.location.href = `/main/id:${roomId}`;
             });
 
             // 삭제 버튼 클릭 이벤트 추가

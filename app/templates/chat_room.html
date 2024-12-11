@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Trend NV</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='images/trendNavi-logo.png') }}" type="image/x-icon" />
+    <!-- marked.js CDN 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- DOMPurify.js CDN 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.4/purify.min.js"></script>
+    <script>
+        const chatBotLogoUrl = "{{ url_for('static', filename='images/trendNavi-logo.png') }}"
+    </script>
+
+</head>
+
+<body class="h-screen bg-gray-100">
+    <!-- 화면 전체 -->
+    <div class="flex h-full">
+        <!-- Left Sidebar -->
+        <div id="sidebar" class="w-1/4 bg-gray-800 text-white p-4 relative overflow-y-auto h-screen">
+            <nav aria-label="채팅기록" class="flex flex-col h-full">
+                <!-- New Chat and Close Sidebar buttons at the top -->
+                <div class="flex justify-between mb-6 mt-1">
+                    <!-- 사이드바 숨김버튼 -->
+                    <button id="close-sidebar-btn" class="h-10 rounded-lg px-2 hover:bg-gray-600">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="icon-xl-heavy max-md:hidden">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M8.85719 3H15.1428C16.2266 2.99999 17.1007 2.99998 17.8086 3.05782C18.5375 3.11737 19.1777 3.24318 19.77 3.54497C20.7108 4.02433 21.4757 4.78924 21.955 5.73005C22.2568 6.32234 22.3826 6.96253 22.4422 7.69138C22.5 8.39925 22.5 9.27339 22.5 10.3572V13.6428C22.5 14.7266 22.5 15.6008 22.4422 16.3086C22.3826 17.0375 22.2568 17.6777 21.955 18.27C21.4757 19.2108 20.7108 19.9757 19.77 20.455C19.1777 20.7568 18.5375 20.8826 17.8086 20.9422C17.1008 21 16.2266 21 15.1428 21H8.85717C7.77339 21 6.89925 21 6.19138 20.9422C5.46253 20.8826 4.82234 20.7568 4.23005 20.455C3.28924 19.9757 2.52433 19.2108 2.04497 18.27C1.74318 17.6777 1.61737 17.0375 1.55782 16.3086C1.49998 15.6007 1.49999 14.7266 1.5 13.6428V10.3572C1.49999 9.27341 1.49998 8.39926 1.55782 7.69138C1.61737 6.96253 1.74318 6.32234 2.04497 5.73005C2.52433 4.78924 3.28924 4.02433 4.23005 3.54497C4.82234 3.24318 5.46253 3.11737 6.19138 3.05782C6.89926 2.99998 7.77341 2.99999 8.85719 3ZM6.35424 5.05118C5.74907 5.10062 5.40138 5.19279 5.13803 5.32698C4.57354 5.6146 4.1146 6.07354 3.82698 6.63803C3.69279 6.90138 3.60062 7.24907 3.55118 7.85424C3.50078 8.47108 3.5 9.26339 3.5 10.4V13.6C3.5 14.7366 3.50078 15.5289 3.55118 16.1458C3.60062 16.7509 3.69279 17.0986 3.82698 17.362C4.1146 17.9265 4.57354 18.3854 5.13803 18.673C5.40138 18.8072 5.74907 18.8994 6.35424 18.9488C6.97108 18.9992 7.76339 19 8.9 19H9.5V5H8.9C7.76339 5 6.97108 5.00078 6.35424 5.05118ZM11.5 5V19H15.1C16.2366 19 17.0289 18.9992 17.6458 18.9488C18.2509 18.8994 18.5986 18.8072 18.862 18.673C19.4265 18.3854 19.8854 17.9265 20.173 17.362C20.3072 17.0986 20.3994 16.7509 20.4488 16.1458C20.4992 15.5289 20.5 14.7366 20.5 13.6V10.4C20.5 9.26339 20.4992 8.47108 20.4488 7.85424C20.3994 7.24907 20.3072 6.90138 20.173 6.63803C19.8854 6.07354 19.4265 5.6146 18.862 5.32698C18.5986 5.19279 18.2509 5.10062 17.6458 5.05118C17.0289 5.00078 16.2366 5 15.1 5H11.5ZM5 8.5C5 7.94772 5.44772 7.5 6 7.5H7C7.55229 7.5 8 7.94772 8 8.5C8 9.05229 7.55229 9.5 7 9.5H6C5.44772 9.5 5 9.05229 5 8.5ZM5 12C5 11.4477 5.44772 11 6 11H7C7.55229 11 8 11.4477 8 12C8 12.5523 7.55229 13 7 13H6C5.44772 13 5 12.5523 5 12Z"
+                                fill="currentColor"></path>
+                        </svg>
+                    </button>
+                    <!-- 새 채팅 버튼 -->
+                    <button id="create-room-button" aria-label="새 채팅" data-testid="create-new-chat-button"
+                        class="h-10 rounded-lg px-2 hover:bg-gray-600"><svg width="24" height="24" viewBox="0 0 24 24"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="icon-xl-heavy">
+                            <path
+                                d="M15.6729 3.91287C16.8918 2.69392 18.8682 2.69392 20.0871 3.91287C21.3061 5.13182 21.3061 7.10813 20.0871 8.32708L14.1499 14.2643C13.3849 15.0293 12.3925 15.5255 11.3215 15.6785L9.14142 15.9899C8.82983 16.0344 8.51546 15.9297 8.29289 15.7071C8.07033 15.4845 7.96554 15.1701 8.01005 14.8586L8.32149 12.6785C8.47449 11.6075 8.97072 10.615 9.7357 9.85006L15.6729 3.91287ZM18.6729 5.32708C18.235 4.88918 17.525 4.88918 17.0871 5.32708L11.1499 11.2643C10.6909 11.7233 10.3932 12.3187 10.3014 12.9613L10.1785 13.8215L11.0386 13.6986C11.6812 13.6068 12.2767 13.3091 12.7357 12.8501L18.6729 6.91287C19.1108 6.47497 19.1108 5.76499 18.6729 5.32708ZM11 3.99929C11.0004 4.55157 10.5531 4.99963 10.0008 5.00007C9.00227 5.00084 8.29769 5.00827 7.74651 5.06064C7.20685 5.11191 6.88488 5.20117 6.63803 5.32695C6.07354 5.61457 5.6146 6.07351 5.32698 6.63799C5.19279 6.90135 5.10062 7.24904 5.05118 7.8542C5.00078 8.47105 5 9.26336 5 10.4V13.6C5 14.7366 5.00078 15.5289 5.05118 16.1457C5.10062 16.7509 5.19279 17.0986 5.32698 17.3619C5.6146 17.9264 6.07354 18.3854 6.63803 18.673C6.90138 18.8072 7.24907 18.8993 7.85424 18.9488C8.47108 18.9992 9.26339 19 10.4 19H13.6C14.7366 19 15.5289 18.9992 16.1458 18.9488C16.7509 18.8993 17.0986 18.8072 17.362 18.673C17.9265 18.3854 18.3854 17.9264 18.673 17.3619C18.7988 17.1151 18.8881 16.7931 18.9393 16.2535C18.9917 15.7023 18.9991 14.9977 18.9999 13.9992C19.0003 13.4469 19.4484 12.9995 20.0007 13C20.553 13.0004 21.0003 13.4485 20.9999 14.0007C20.9991 14.9789 20.9932 15.7808 20.9304 16.4426C20.8664 17.116 20.7385 17.7136 20.455 18.2699C19.9757 19.2107 19.2108 19.9756 18.27 20.455C17.6777 20.7568 17.0375 20.8826 16.3086 20.9421C15.6008 21 14.7266 21 13.6428 21H10.3572C9.27339 21 8.39925 21 7.69138 20.9421C6.96253 20.8826 6.32234 20.7568 5.73005 20.455C4.78924 19.9756 4.02433 19.2107 3.54497 18.2699C3.24318 17.6776 3.11737 17.0374 3.05782 16.3086C2.99998 15.6007 2.99999 14.7266 3 13.6428V10.3572C2.99999 9.27337 2.99998 8.39922 3.05782 7.69134C3.11737 6.96249 3.24318 6.3223 3.54497 5.73001C4.02433 4.7892 4.78924 4.0243 5.73005 3.54493C6.28633 3.26149 6.88399 3.13358 7.55735 3.06961C8.21919 3.00673 9.02103 3.00083 9.99922 3.00007C10.5515 2.99964 10.9996 3.447 11 3.99929Z"
+                                fill="currentColor"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex flex-col">
+                    <h4 class="text-xl font-semibold mb-4">Chat History</h4>
+                    <!-- Chat history list here -->
+                    <div class="space-y-2">
+                        <ol>
+                            <div id="chat-rooms">
+                                <!-- 채팅방 생성구역 -->
+                            </div>
+                        </ol>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button onclick="click_cart()"
+                            class="absolute bottom-4 right-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                            장바구니
+                        </button>
+
+                    </div>
+            </nav>
+        </div>
+
+        <!-- Right Main Chat Area -->
+        <div class="w-full flex flex-col h-full">
+            <!-- Header with chatbot logo and name -->
+            <div class="bg-gray-900 text-white p-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <!-- sidebar open button -->
+                    <button id="open-sidebar-btn" class="h-10 rounded-lg px-2 mr-4 hover:bg-gray-600 hidden">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="icon-xl-heavy max-md:hidden">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M8.85719 3H15.1428C16.2266 2.99999 17.1007 2.99998 17.8086 3.05782C18.5375 3.11737 19.1777 3.24318 19.77 3.54497C20.7108 4.02433 21.4757 4.78924 21.955 5.73005C22.2568 6.32234 22.3826 6.96253 22.4422 7.69138C22.5 8.39925 22.5 9.27339 22.5 10.3572V13.6428C22.5 14.7266 22.5 15.6008 22.4422 16.3086C22.3826 17.0375 22.2568 17.6777 21.955 18.27C21.4757 19.2108 20.7108 19.9757 19.77 20.455C19.1777 20.7568 18.5375 20.8826 17.8086 20.9422C17.1008 21 16.2266 21 15.1428 21H8.85717C7.77339 21 6.89925 21 6.19138 20.9422C5.46253 20.8826 4.82234 20.7568 4.23005 20.455C3.28924 19.9757 2.52433 19.2108 2.04497 18.27C1.74318 17.6777 1.61737 17.0375 1.55782 16.3086C1.49998 15.6007 1.49999 14.7266 1.5 13.6428V10.3572C1.49999 9.27341 1.49998 8.39926 1.55782 7.69138C1.61737 6.96253 1.74318 6.32234 2.04497 5.73005C2.52433 4.78924 3.28924 4.02433 4.23005 3.54497C4.82234 3.24318 5.46253 3.11737 6.19138 3.05782C6.89926 2.99998 7.77341 2.99999 8.85719 3ZM6.35424 5.05118C5.74907 5.10062 5.40138 5.19279 5.13803 5.32698C4.57354 5.6146 4.1146 6.07354 3.82698 6.63803C3.69279 6.90138 3.60062 7.24907 3.55118 7.85424C3.50078 8.47108 3.5 9.26339 3.5 10.4V13.6C3.5 14.7366 3.50078 15.5289 3.55118 16.1458C3.60062 16.7509 3.69279 17.0986 3.82698 17.362C4.1146 17.9265 4.57354 18.3854 5.13803 18.673C5.40138 18.8072 5.74907 18.8994 6.35424 18.9488C6.97108 18.9992 7.76339 19 8.9 19H9.5V5H8.9C7.76339 5 6.97108 5.00078 6.35424 5.05118ZM11.5 5V19H15.1C16.2366 19 17.0289 18.9992 17.6458 18.9488C18.2509 18.8994 18.5986 18.8072 18.862 18.673C19.4265 18.3854 19.8854 17.9265 20.173 17.362C20.3072 17.0986 20.3994 16.7509 20.4488 16.1458C20.4992 15.5289 20.5 14.7366 20.5 13.6V10.4C20.5 9.26339 20.4992 8.47108 20.4488 7.85424C20.3994 7.24907 20.3072 6.90138 20.173 6.63803C19.8854 6.07354 19.4265 5.6146 18.862 5.32698C18.5986 5.19279 18.2509 5.10062 17.6458 5.05118C17.0289 5.00078 16.2366 5 15.1 5H11.5ZM5 8.5C5 7.94772 5.44772 7.5 6 7.5H7C7.55229 7.5 8 7.94772 8 8.5C8 9.05229 7.55229 9.5 7 9.5H6C5.44772 9.5 5 9.05229 5 8.5ZM5 12C5 11.4477 5.44772 11 6 11H7C7.55229 11 8 11.4477 8 12C8 12.5523 7.55229 13 7 13H6C5.44772 13 5 12.5523 5 12Z"
+                                fill="currentColor"></path>
+                        </svg>
+                    </button>
+                    <a href="{{ url_for('main.main') }}" class="flex items-center"
+                        style="text-decoration: none; color:white">
+                        <img src="{{ url_for('static', filename='images/trendNavi-logo.png') }}" alt="Chatbot Logo"
+                            class="mr-2 w-12 h-12 rounded-lg">
+                        <h4 class="text-xl font-semibold">Trend NV</h4>
+                    </a>
+                </div>
+                <!-- 공유버튼 -->
+                <div class="flex items-center gap-2 pr-1 leading-[0]">
+                    <button
+                        class="h-10 px-4 py-2 rounded-full btn relative btn-secondary hover:bg-gray-600 border border-gray-500 text-sm"
+                        data-testid="share-chat-button">
+                        <div class="flex w-full items-center justify-center gap-1.5">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" class="icon-sm">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M11.2929 3.29289C11.6834 2.90237 12.3166 2.90237 12.7071 3.29289L16.7071 7.29289C17.0976 7.68342 17.0976 8.31658 16.7071 8.70711C16.3166 9.09763 15.6834 9.09763 15.2929 8.70711L13 6.41421V15C13 15.5523 12.5523 16 12 16C11.4477 16 11 15.5523 11 15V6.41421L8.70711 8.70711C8.31658 9.09763 7.68342 9.09763 7.29289 8.70711C6.90237 8.31658 6.90237 7.68342 7.29289 7.29289L11.2929 3.29289ZM4 14C4.55228 14 5 14.4477 5 15V18C5 18.5523 5.44772 19 6 19H18C18.5523 19 19 18.5523 19 18V15C19 14.4477 19.4477 14 20 14C20.5523 14 21 14.4477 21 15V18C21 19.6569 19.6569 21 18 21H6C4.34315 21 3 19.6569 3 18V15C3 14.4477 3.44772 14 4 14Z"
+                                    fill="currentColor"></path>
+                            </svg>
+                            공유하기
+                        </div>
+                    </button>
+                    <!-- 프로필 버튼-->
+                    <div class="relative">
+                        <!-- 프로필 버튼 -->
+                        <button onclick="toggleMenu()"
+                            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-400"
+                            data-testid="profile-button">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" width="24"
+                                height="24" stroke-width="1.5" stroke="currentColor" class="w-9 h-9">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                        </button>
+
+                        <!-- 드롭다운 메뉴 -->
+                        <div id="profileMenu"
+                            class="hidden absolute right-0 top-full py-2 mt-1 w-72 bg-gray-700 text-white rounded-lg shadow-lg z-50">
+                            <div class="flex items-center py-2 pl-5 pr-4">
+                                <p class="text-sm font-medium" id="user_name"></p>
+                            </div>
+                            <div role="separator" aria-orientation="horizontal" class="mx-5 my-1 h-px bg-gray-600">
+                            </div>
+                            <div role="menuitem"
+                                class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
+                                tabindex="-1">
+                                <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M11.5677 3.5C11.2129 3.5 10.8847 3.68789 10.7051 3.99377L9.89391 5.37524C9.3595 6.28538 8.38603 6.84786 7.3304 6.85645L5.73417 6.86945C5.3794 6.87233 5.0527 7.06288 4.87559 7.3702L4.43693 8.13135C4.2603 8.43784 4.25877 8.81481 4.43291 9.12273L5.22512 10.5235C5.74326 11.4397 5.74326 12.5603 5.22512 13.4765L4.43291 14.8773C4.25877 15.1852 4.2603 15.5622 4.43693 15.8687L4.87559 16.6298C5.0527 16.9371 5.3794 17.1277 5.73417 17.1306L7.33042 17.1436C8.38605 17.1522 9.35952 17.7146 9.89393 18.6248L10.7051 20.0062C10.8847 20.3121 11.2129 20.5 11.5677 20.5H12.4378C12.7926 20.5 13.1208 20.3121 13.3004 20.0062L14.1116 18.6248C14.646 17.7146 15.6195 17.1522 16.6751 17.1436L18.2714 17.1306C18.6262 17.1277 18.9529 16.9371 19.13 16.6298L19.5687 15.8687C19.7453 15.5622 19.7468 15.1852 19.5727 14.8773L18.7805 13.4765C18.2623 12.5603 18.2623 11.4397 18.7805 10.5235L19.5727 9.12273C19.7468 8.81481 19.7453 8.43784 19.5687 8.13135L19.13 7.3702C18.9529 7.06288 18.6262 6.87233 18.2714 6.86945L16.6751 6.85645C15.6195 6.84786 14.646 6.28538 14.1116 5.37524L13.3004 3.99377C13.1208 3.68788 12.7926 3.5 12.4378 3.5H11.5677ZM8.97978 2.98131C9.5186 2.06365 10.5033 1.5 11.5677 1.5H12.4378C13.5022 1.5 14.4869 2.06365 15.0257 2.98131L15.8369 4.36278C16.015 4.66616 16.3395 4.85365 16.6914 4.85652L18.2877 4.86951C19.352 4.87818 20.3321 5.4498 20.8635 6.37177L21.3021 7.13292C21.832 8.05239 21.8366 9.18331 21.3142 10.1071L20.522 11.5078C20.3493 11.8132 20.3493 12.1868 20.522 12.4922L21.3142 13.893C21.8366 14.8167 21.832 15.9476 21.3021 16.8671L20.8635 17.6282C20.3321 18.5502 19.352 19.1218 18.2877 19.1305L16.6914 19.1435C16.3395 19.1464 16.015 19.3339 15.8369 19.6372L15.0257 21.0187C14.4869 21.9363 13.5022 22.5 12.4378 22.5H11.5677C10.5033 22.5 9.5186 21.9363 8.97978 21.0187L8.16863 19.6372C7.99049 19.3339 7.666 19.1464 7.31413 19.1435L5.71789 19.1305C4.65357 19.1218 3.67347 18.5502 3.14213 17.6282L2.70347 16.8671C2.17358 15.9476 2.16899 14.8167 2.6914 13.893L3.48361 12.4922C3.65632 12.1868 3.65632 11.8132 3.48361 11.5078L2.6914 10.1071C2.16899 9.18331 2.17358 8.05239 2.70347 7.13292L3.14213 6.37177C3.67347 5.4498 4.65357 4.87818 5.71789 4.86951L7.31411 4.85652C7.66599 4.85366 7.99048 4.66616 8.16862 4.36278L8.97978 2.98131Z"
+                                            fill="currentColor"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M12.0028 10.5C11.1741 10.5 10.5024 11.1716 10.5024 12C10.5024 12.8284 11.1741 13.5 12.0028 13.5C12.8315 13.5 13.5032 12.8284 13.5032 12C13.5032 11.1716 12.8315 10.5 12.0028 10.5ZM8.50178 12C8.50178 10.067 10.0692 8.5 12.0028 8.5C13.9364 8.5 15.5038 10.067 15.5038 12C15.5038 13.933 13.9364 15.5 12.0028 15.5C10.0692 15.5 8.50178 13.933 8.50178 12Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                </div>
+                                설정
+                            </div>
+                            <div role="menuitem"
+                                class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
+                                tabindex="-1" onclick="click_cart()">
+                                <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                    </svg>
+
+                                </div>
+                                장바구니
+                            </div>
+
+                            <div role="separator" aria-orientation="horizontal" class="mx-5 my-1 h-px bg-gray-600">
+                            </div>
+                            <div role="menuitem"
+                                class="flex items-center mx-1.5 p-2.5 text-sm cursor-pointer focus-visible:outline-0 group relative hover:bg-gray-600 focus-visble:bg-gray-600 gap-2.5 py-3"
+                                tabindex="-1" onclick="click_logout()">
+                                <div class="flex items-center justify-center text-token-text-secondary h-5 w-5">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0">
+                                        <path fill-rule="evenodd" clip-rule="evenodd"
+                                            d="M6 4C5.44772 4 5 4.44772 5 5V19C5 19.5523 5.44772 20 6 20H10C10.5523 20 11 20.4477 11 21C11 21.5523 10.5523 22 10 22H6C4.34315 22 3 20.6569 3 19V5C3 3.34315 4.34315 2 6 2H10C10.5523 2 11 2.44772 11 3C11 3.55228 10.5523 4 10 4H6ZM15.2929 7.29289C15.6834 6.90237 16.3166 6.90237 16.7071 7.29289L20.7071 11.2929C21.0976 11.6834 21.0976 12.3166 20.7071 12.7071L16.7071 16.7071C16.3166 17.0976 15.6834 17.0976 15.2929 16.7071C14.9024 16.3166 14.9024 15.6834 15.2929 15.2929L17.5858 13H11C10.4477 13 10 12.5523 10 12C10 11.4477 10.4477 11 11 11H17.5858L15.2929 8.70711C14.9024 8.31658 14.9024 7.68342 15.2929 7.29289Z"
+                                            fill="currentColor"></path>
+                                    </svg>
+                                </div>
+                                로그아웃
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat messages area -->
+            <div class="flex-grow p-4 overflow-y-auto bg-white" id="chat-messages"
+                data-chatbot-logo="{{ url_for('static', filename='images/trendNavi-logo.png') }}">
+                <div id="llmResponse"></div>
+                {% for message in messages %}
+                {% if message.user_id == user_id %}
+                <!-- 사용자의 메시지 -->
+                <div class="flex justify-end mb-4">
+                    <div class="bg-blue-500 text-white p-4 rounded-lg">
+                        {{ message.content }}
+                    </div>
+                </div>
+                {% else %}
+                <!-- 챗봇의 메시지 -->
+                <div class="flex items-start mb-4">
+                    <img src="{{ chatBotLogoUrl }}" alt="Chatbot-Logo" class="mr-2 w-12 h-12 rounded-full">
+                    <div class="bg-gray-100 p-4 rounded-lg bot-message-content">
+                        {{ message.content }}
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+
+            </div>
+
+
+            <!-- 여기서부터 footer -->
+            <div class="md:pt-0 dark:border-white/20 md:border-transparent md:dark:border-transparent w-full bg-white">
+                <div>
+
+                    <div class="m-auto text-base px-3 md:px-4 w-full md:px-5 lg:px-4 xl:px-5">
+                        <!-- INPUT 창 -->
+                        <div class="mx-auto flex flex-1 justify-center gap-4 text-base md:gap-5 lg:gap-6">
+                            <form class="w-full" type="button" aria-haspopup="dialog" aria-expanded="false"
+                                aria-controls="radix-:R6j4pai4lj5:" data-state="closed">
+                                <div class="relative flex h-full max-w-full flex-1 flex-col">
+                                    <div class="absolute bottom-full left-0 right-0 z-20"></div>
+                                    <div class="group relative flex w-full items-center justify-center">
+                                        <div class="absolute bottom-16 space-y-2 z-20"></div>
+                                        <!-- 실질적인 동작 코드 -->
+                                        <div
+                                            class="flex items-center w-full max-w-3xl p-2 rounded-full bg-gray-100 shadow-sm mx-auto">
+                                            <!-- 첨부 파일 버튼 -->
+                                            <button id="upload-btn" type="button"
+                                                class="flex items-center justify-center h-8 w-8 rounded-full text-gray-500 hover:text-black focus:outline-none">
+                                                <!-- 첨부 파일 아이콘 -->
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M9 7C9 4.23858 11.2386 2 14 2C16.7614 2 19 4.23858 19 7V15C19 18.866 15.866 22 12 22C8.13401 22 5 18.866 5 15V9C5 8.44772 5.44772 8 6 8C6.55228 8 7 8.44772 7 9V15C7 17.7614 9.23858 20 12 20C14.7614 20 17 17.7614 17 15V7C17 5.34315 15.6569 4 14 4C12.3431 4 11 5.34315 11 7V15C11 15.5523 11.4477 16 12 16C12.5523 16 13 15.5523 13 15V9C13 8.44772 13.4477 8 14 8C14.5523 8 15 8.44772 15 9V15C15 16.6569 13.6569 18 12 18C10.3431 18 9 16.6569 9 15V7Z"
+                                                        fill="currentColor"></path>
+                                                </svg>
+                                                <!-- 첨부 파일 아이콘 -->
+                                            </button>
+                                            <input type="file" id="image-input" accept="image/*" style="display: none;">
+                                            <!-- 메시지 입력창 -->
+                                            <input type="text" id="user-input" placeholder="메시지 TrandNV"
+                                                class="flex-grow bg-transparent border-0 px-4 py-2 text-gray-700 focus:outline-none" />
+
+                                            <!-- 전송 버튼 -->
+                                            <button id="send-button"
+                                                class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 hover:text-black focus:outline-none">
+                                                <!-- 전송 아이콘 -->
+                                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg" class="icon-2xl">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                        d="M15.1918 8.90615C15.6381 8.45983 16.3618 8.45983 16.8081 8.90615L21.9509 14.049C22.3972 14.4953 22.3972 15.2189 21.9509 15.6652C21.5046 16.1116 20.781 16.1116 20.3347 15.6652L17.1428 12.4734V22.2857C17.1428 22.9169 16.6311 23.4286 15.9999 23.4286C15.3688 23.4286 14.8571 22.9169 14.8571 22.2857V12.4734L11.6652 15.6652C11.2189 16.1116 10.4953 16.1116 10.049 15.6652C9.60265 15.2189 9.60265 14.4953 10.049 14.049L15.1918 8.90615Z"
+                                                        fill="currentColor"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- footer 안내 문구 -->
+                    <div
+                        class="relative w-full px-2 py-2 text-center text-xs text-token-text-secondary empty:hidden md:px-[60px]">
+                        <div class="min-h-4">
+                            <div>TrandNV는 실수를 할 수 있습니다. 중요한 정보를 확인하세요.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    </div>
+
+    <!-- Jquery connection -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <!-- script connection -->
+    <script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
