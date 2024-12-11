@@ -2,6 +2,7 @@
 from flask import Blueprint, jsonify, request, Response
 from datetime import datetime
 
+
 from app.db.redis_client import get_redis_message
 from app.db.redis_client import get_recent_history 
 from app.db.task import sync_chat_messages
@@ -17,6 +18,7 @@ from app.models.chat_rooms_model import ChatRoom
 from app.models.messages_model import Message
 
 from app.llm_config import llm, prompt, trend_template, extract_keyword ,LLMConfig
+
 
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import verify_jwt_in_request
@@ -118,6 +120,7 @@ def chat():
             yield f"data: {json.dumps({'response': price_comparison_response})}\n\n"
             return
 
+
         
         print("[DEBUG] 네이버 쇼핑 API 호출 시작")
 
@@ -140,13 +143,11 @@ def chat():
             print("[DEBUG] llm_config에 전달된 상품 정보:")
             print(llm_config.get_product_info())  
 
-
         # LLM 프롬프트 생성
         print("[DEBUG] LLM 프롬프트 생성 시작")
-
         messages = prompt.format_messages(
             product_info=llm_config.get_product_info(),  # LLMConfig에서 product_info 가져오기
-            history="\n".join(get_recent_history(session_id=session_id, limit=5)),
+            history="\n".join(redis_memory.get_recent_history(limit=5)),
             human_input=user_message
         )
         print("[DEBUG] LLM 프롬프트 생성 완료")
@@ -158,6 +159,7 @@ def chat():
             if chunk.content:
                 full_response += chunk.content
                 yield f"data: {json.dumps({'response': full_response}, ensure_ascii=False)}\n\n"
+
         
         # Redis에 메시지 저장 (이전에는 redis_memory.save_context 사용)
         message_data = {
@@ -170,6 +172,7 @@ def chat():
         redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
         print("[DEBUG] Redis에 응답 저장 완료")
         sync_chat_messages.delay(room_id)
+
 
     return Response(generate_response(), content_type='text/event-stream')
 
@@ -228,6 +231,7 @@ def add_message_to_room(room_id):
         "content": content,
         "timestamp": datetime.now().isoformat()
     }
+
     redis_conn = get_redis_message()  # redis_message 클라이언트 객체 얻기
 
 
