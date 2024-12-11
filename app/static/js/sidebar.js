@@ -19,7 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 페이지 로드 시 사이드바 상태 설정
-    handleSidebarVisibility();
+    sidebar.classList.add("hidden");
+    openSidebarButton.classList.remove("hidden");
 
     // 창 크기가 변경될 때마다 사이드바 상태 변경
     window.addEventListener("resize", handleSidebarVisibility);
