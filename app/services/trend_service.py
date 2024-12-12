@@ -5,6 +5,15 @@ import json
 # SerpAPI API 키 설정
 SERPAPI_KEY = os.getenv("SERPAPI_KEY")
 
+def safe_int(value):
+    """값을 안전하게 int로 변환"""
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        print(f"[DEBUG] 값 변환 실패: {value}")
+        return None
+    
+
 def get_related_topics(keyword):
     """키워드에 대한 관련 주제 트렌드를 수집하여 상위 주제를 반환"""
     if not SERPAPI_KEY:
@@ -40,18 +49,19 @@ def get_related_topics(keyword):
             rising_topics = related_topics.get("rising", [])
             top_topics = related_topics.get("top", [])
 
-            # 필요한 필드만 추출 후 정렬
             sorted_rising_topics = [
-                {"title": topic["topic"]["title"], "value": topic["value"], "link": topic["link"]}
+                {"title": topic["topic"]["title"], "value": safe_int(topic["value"]), "link": topic["link"]}
                 for topic in rising_topics
+                if safe_int(topic["value"]) is not None
             ]
-            sorted_rising_topics = sorted(sorted_rising_topics, key=lambda x: int(x["value"]), reverse=True)[:3]
+            sorted_rising_topics = sorted(sorted_rising_topics, key=lambda x: x["value"], reverse=True)[:3]
 
             sorted_top_topics = [
-                {"title": topic["topic"]["title"], "value": topic["value"], "link": topic["link"]}
+                {"title": topic["topic"]["title"], "value": safe_int(topic["value"]), "link": topic["link"]}
                 for topic in top_topics
+                if safe_int(topic["value"]) is not None
             ]
-            sorted_top_topics = sorted(sorted_top_topics, key=lambda x: int(x["value"]), reverse=True)[:3]
+            sorted_top_topics = sorted(sorted_top_topics, key=lambda x: x["value"], reverse=True)[:3]
 
             # 데이터가 없을 경우 처리
             if not sorted_rising_topics and not sorted_top_topics:

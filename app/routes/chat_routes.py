@@ -125,7 +125,7 @@ def chat():
                 return
         
         # 가격 비교 처리
-        if "가격 비교" or "가격비교" in user_message:
+        if "가격 비교" in user_message or "가격비교" in user_message:
             print("[DEBUG] 가격 비교 요청 처리 시작")
             
             # 가격 비교 정보 가져오기
@@ -170,6 +170,7 @@ def chat():
             print("[DEBUG] Redis에 가격 비교 응답 저장 완료")
 
             return
+
  
 
         print("[DEBUG] 네이버 쇼핑 API 호출 시작")
