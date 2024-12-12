@@ -22,8 +22,10 @@ function getCurrentUserId() {
 }
 
 // 채팅방 생성 함수
+
 function createChatRoom(roomName) {
     // 채팅방 생성 API 호출
+
     fetch("/chat/createRoom", {
         method: "POST",
         headers: {
@@ -32,6 +34,7 @@ function createChatRoom(roomName) {
         },
         body: JSON.stringify({ room_name: roomName }),
     })
+
         .then((response) => {
             // 응답 상태 확인
             if (!response.ok) {
@@ -57,6 +60,7 @@ function createChatRoom(roomName) {
             } else {
                 console.error("[DEBUG] room_id가 없음:", data);
                 alert("채팅방 생성에 실패했습니다. 다시 시도하세요.");
+
             }
         })
         .catch((error) => {

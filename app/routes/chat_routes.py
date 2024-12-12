@@ -1,5 +1,5 @@
 # app/routes/chat_routes.py
-from flask import Blueprint, jsonify, request, Response, render_template, redirect, url_for
+from flask import Blueprint, jsonify, request, Response, render_template
 from datetime import datetime
 
 from app.db.redis_client import redis_message
@@ -36,8 +36,8 @@ def chat():
     verify_jwt_in_request()
     
     user_id = get_jwt_identity()    
+    print(user_id)
     session_id = str(user_id)
-    
     redis_conn = get_redis_message()
 
     # 유저가 입력한 메시지
@@ -256,8 +256,6 @@ def create_chat_room():
     room_id = new_chat_room.room_id
     session.close()
     
-    
-    print(f"[DEBUG] 응답 데이터: room_id={room_id}, room_name={room_name}")
     return jsonify({"message": "Chat room created", "room_id": room_id, "room_name": room_name}), 201
 
 
@@ -298,6 +296,9 @@ def add_message_to_room(room_id):
     redis_key = f"chat:room:{room_id}:messages"
     redis_conn.rpush(redis_key, json.dumps(message_data, ensure_ascii=False))
 
+    # 백그라운드로 동기화 태스크 전달
+    # Celery를 이용한다면 다음과 같이 태스크 호출
+    sync_chat_messages.delay(room_id)
 
     return jsonify({"message": "Message queued for syncing", "room_id": room_id}), 201
 
@@ -382,6 +383,7 @@ def chat_room(chat_room_id):
     chat_data = redis_message.lrange(f"chat:room:{chat_room_id}:messages", 0, -1)  # Redis 리스트의 모든 데이터 가져오기
     
     messages = [json.loads(msg) for msg in chat_data]  # JSON 문자열을 파이썬 딕셔너리로 변환
+
     return render_template("chat_room.html", messages=messages, chat_room_id=chat_room_id)
 
 @chat_bp.route("/main/id/<int:room_id>", methods=['POST'])
@@ -431,3 +433,4 @@ def start_chat(room_id):
     except Exception as e:
         print(f"[ERROR] /main/id/<room_id> 처리 중 오류 발생: {str(e)}")
         return jsonify({"error": "An error occurred", "details": str(e)}), 500
+
