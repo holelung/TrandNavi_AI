@@ -11,8 +11,7 @@ llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
 template = """
     너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야.
     사용자가 요청한 상품과 관련된 정보를 충분히 얻기 위해 필요한 세 가지 질문을 번호 형식으로 자동 생성하고,
-    질문이 충분히 충족되면 최적의 상품 추천을 제공해줘.
-    
+    질문이 충분히 충족되면 최적의 상품 추천을 제공해줘. 
     질문을 생성할 때 항상 질문 앞에 "1번", "2번", "3번"과 같이 번호를 붙여 제공해.
     
     예시:
@@ -48,8 +47,8 @@ template = """
 
 모든 HTML 태그는 정확히 위 형식을 따라야 하며, 특히 이미지 URL과 구매 링크는 변경하지 말고 그대로 사용해야 합니다.
 
-추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요?"라고 묻고,
-사용자가 "네"라고 대답하면 "몇 번 상품의 가격 비교가 필요하신가요?"라고 질문해줘.
+추천한 후, 사용자에게 다음과 같은 질문으로 "가격 비교가 필요하신가요? 필요하시면 상품명과 가격 비교해줘라는 답을 해주세요!"라고 물어
+
 
 대화 기록:
 {history}
@@ -57,7 +56,27 @@ template = """
 사용자: {human_input}
 트렌드 네비게이터:
 """
+price_comparison_template = """
+너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야.
+사용자가 요청한 상품의 최저가와 최고가를 확인하여 가격 비교 결과를 제공해줘.
 
+아래 데이터를 참고하여 다음과 같은 형식으로 응답해줘:
+1. 현재 가격 비교한 상품의 최저가와 최고가를 비교하여 2문장으로 설명  
+2. 사용자에게 도움될 만한 구체적인 가격 비교 결론 제공
+
+가격 비교 정보 {price_comparison_info}
+예시: 윤지 YUNZII YZ98 무선 핫스왑 기계식키보드의 최저가는 98,900원이고, 최고가는 105,600원입니다.
+가격 차이가 약 6,700원 나타나고 있네요. 따라서, 가장 저렴한 가격으로 구매하기를 원한다면 98,900원의 상품을 선택하는 것이 좋을 것 같습니다.
+하지만 가격 외에도 판매처의 후기나 서비스를 고려하시는 것도 중요합니다.
+
+
+
+대화 기록:
+{history}
+
+사용자: {human_input}
+트렌드 네비게이터:
+"""
 
 # Image-based template
 image_template = """
@@ -74,26 +93,6 @@ image_template = """
         2번. 노트북과 데스크탑 중 어떤 종류를 찾고 계신가요?
         3번. 예상하시는 가격대는 어떻게 되나요?"
         
-    충분한 정보가 수집되면 상품 추천을 아래 형식대로 제공해줘:
-    <pre>
-        <div>
-            - 상품명: [제공된 상품명 그대로 사용]<br>
-            - 이미지: [제공된 이미지 HTML 태그 그대로 사용]<br>
-            - 가격: [제공된 가격 그대로 표시]원<br>
-            - 브랜드: [제공된 브랜드명 그대로 사용]<br>
-            - 카테고리: [제공된 카테고리 그대로 사용]<br>
-            - 링크: <a href="[제공된 링크 URL 그대로 사용]" target="_blank">구매 링크</a><br>
-            - <button data-action="add-to-cart" 
-                data-product-name="[제공된 상품명]"
-                data-price="[제공된 가격]"
-                data-product-img="[제공된 이미지 URL]"
-                data-brand="[제공된 브랜드명]"
-                data-product-url="[제공된 링크 URL]">장바구니에 추가
-            </button><br>
-        </div>
-    </pre>
-    이 버튼은 `onclick` 이벤트를 포함하지 않고, 대신 각 속성 정보를 **data-attributes** 형식으로 추가하도록 합니다. 장바구니 추가 기능은 JavaScript 코드에서 `data-action` 및 `data-product-name` 등을 인식하여 작동하도록 설계되어 있습니다.
-    이 형식을 상품마다 반복해줘서 여러 개의 상품을 추천할 때도 각각 장바구니 버튼이 생성되도록 해줘.
 
     대화 기록:
     {history}
@@ -130,9 +129,9 @@ trend_template = """
 {top_topics}
 
 위 데이터를 바탕으로 다음과 같이 응답해줘:
-1. 현재 '{keyword}' 분야의 전반적인 트렌드 동향을 2-3문장으로 설명
-2. 가장 주목할 만한 상승 트렌드 2개와 그 이유 설명
-3. 사용자에게 도움될 만한 구체적인 제품 카테고리나 스타일 추천
+1. 현재 '{keyword}' 분야의 전반적인 트렌드 동향을 1문장으로 설명
+2. 가장 주목할 만한 상승 트렌드 2개와 그 이유 1문장으로 설명
+3. 사용자에게 도움될 만한 구체적인 제품 카테고리나 스타일 추천 1문장으로 설명
 
 이전 대화 기록:
 {history}
@@ -145,6 +144,7 @@ trend_template = """
 
 # ChatPromptTemplate 초기화
 prompt = ChatPromptTemplate.from_template(template)
+price_comparison_prompt = ChatPromptTemplate.from_template(price_comparison_template)
 image_prompt = ChatPromptTemplate.from_template(image_template)
 trend_prompt = ChatPromptTemplate.from_template(trend_template)
 # 키워드 추출 프롬프트 템플릿
@@ -153,18 +153,26 @@ keyword_prompt = ChatPromptTemplate.from_template(keyword_extract_template)
 class LLMConfig:
     def __init__(self):
         self.product_info = None  # 초기값 설정
+        self.price_comparison_info = None  # 가격 비교 데이터
+        self.trend_info = None  # 트렌드 데이터
 
     def set_product_info(self, product_info):
-        """
-        외부에서 전달받은 product_info 데이터를 저장.
-        """
         self.product_info = product_info
 
     def get_product_info(self):
-        """
-        저장된 product_info 데이터를 반환.
-        """
         return self.product_info
+
+    def set_price_comparison_info(self, price_comparison_info):
+        self.price_comparison_info = price_comparison_info
+
+    def get_price_comparison_info(self):
+        return self.price_comparison_info
+
+    def set_trend_info(self, trend_info):
+        self.trend_info = trend_info
+
+    def get_trend_info(self):
+        return self.trend_info
 
 # Redis 기반 이미지 메모리 설정 함수
 def get_image_llm_with_redis_memory(session_id):
