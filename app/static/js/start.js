@@ -22,7 +22,10 @@ function getCurrentUserId() {
 }
 
 // 채팅방 생성 함수
-async function createChatRoom(roomName) {
+
+function createChatRoom(roomName) {
+    // 채팅방 생성 API 호출
+
     fetch("/chat/createRoom", {
         method: "POST",
         headers: {
@@ -31,25 +34,38 @@ async function createChatRoom(roomName) {
         },
         body: JSON.stringify({ room_name: roomName }),
     })
-        .then((response) => response.json())
-        .then(async (data) => {
+
+        .then((response) => {
+            // 응답 상태 확인
+            if (!response.ok) {
+                throw new Error(`채팅방 생성 실패: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log("[DEBUG] 서버 응답:", data);
+
+            // room_id가 존재하는지 확인
             if (data.room_id) {
                 console.log(`채팅방 '${data.room_name}'이(가) 생성되었습니다.`);
-                // 방 아이디를 localStorage에 저장
-                localStorage.setItem("room_id", data.room_id);
-                console.log("사용자 입력저장");
-                await saveMessageToRoom(data.room_id, data.room_name);
-                console.log("llm 답변생성");
-                await sendMessageFromStart(data.room_id, data.room_name);
 
-                window.location.href = `/main/id:${data.roomId}`;
+                // 방 아이디를 localStorage에 저장
+                const roomId = data.room_id;
+                localStorage.setItem("room_id", roomId);
+
+                // 생성된 방으로 리다이렉션
+                const redirectUrl = `/main/id:${roomId}`;
+                console.log(`[DEBUG] 리다이렉션 URL: ${redirectUrl}`);
+                window.location.href = redirectUrl; // 리다이렉션 수행
             } else {
-                alert("채팅방 생성에 실패했습니다.");
+                console.error("[DEBUG] room_id가 없음:", data);
+                alert("채팅방 생성에 실패했습니다. 다시 시도하세요.");
+
             }
         })
         .catch((error) => {
             console.error("Error creating chat room:", error);
-            alert("채팅방 생성 중 오류가 발생했습니다.");
+            alert(`채팅방 생성 중 오류 발생: ${error.message}`);
         });
 }
 
