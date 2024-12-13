@@ -14,7 +14,7 @@ class Cart(Base):
     product_name = Column(String(100), nullable=False)
     product_detail = Column(JSON, nullable=True)
     price = Column(Numeric(15, 2), nullable=True)
-    product_img = Column(String(200), nullable=True)
+    product_img = Column(String(1000), nullable=True)
     product_url = Column(String(1000), nullable=True)
     add_at = Column(DateTime, default=datetime.now)
     
