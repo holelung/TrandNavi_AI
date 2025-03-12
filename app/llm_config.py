@@ -4,6 +4,7 @@ from app.redis_handler import RedisChatMemory
 from app.services.trend_service import get_related_topics
 from app.services.naver_shopping_service import format_product_info
 
+from app.db.redis_client import get_recent_history
 #테스트 testtest tttess
 # LLM 모델 초기화
 llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
@@ -11,7 +12,7 @@ llm = ChatOpenAI(temperature=0.7, model_name="gpt-4", streaming=True)
 template = """
     너는 '트렌드 네비게이터'라는 이름의 네이버 쇼핑 도우미야.
     사용자가 요청한 상품과 관련된 정보를 충분히 얻기 위해 필요한 세 가지 질문을 번호 형식으로 자동 생성하고,
-    질문이 충분히 충족되면 최적의 상품 추천을 제공해줘. 
+    질문이 충분히 충족되면 최적의 상품 추천을 제공해줘.
     질문을 생성할 때 항상 질문 앞에 "1번", "2번", "3번"과 같이 번호를 붙여 제공해.
     
     예시:
